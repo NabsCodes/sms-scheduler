@@ -1,0 +1,35 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap");
+
+body {
+	font-family: "Lato", sans-serif;
+}
+
+.fade-out {
+	opacity: 0;
+	transition: opacity 1s ease;
+}
+
+.btn-outline-primary {
+	border-radius: 0;
+}
+
+.btn-group {
+	display: flex;
+	justify-content: space-between;
+}
+
+@media (max-width: 2000px) {
+	.btn-group {
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+	.btn-group .btn {
+		margin-bottom: 10px;
+	}
+}
+
+@media (max-width: 768px) {
+	.shadow {
+		margin-top: 10px;
+	}
+}
