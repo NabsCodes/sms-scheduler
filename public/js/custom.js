@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
 	setInterval(() => {
 		const now = new Date();
 		const hour = `${now.getHours()}`.padStart(2, 0);
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		label.textContent = 'Light Mode';
 	}
 
-	checkbox.addEventListener('change', function () {
+	checkbox.addEventListener('change', () => {
 		if (this.checked) {
 			body.setAttribute('data-bs-theme', 'dark');
 			localStorage.setItem('theme', 'dark');
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	let firstChecked = null;
 
 	function addCheckboxListener(id, key) {
-		document.getElementById(id).addEventListener('click', function () {
+		document.getElementById(id).addEventListener('click', () => {
 			if (this.checked) {
 				if (!firstChecked) {
 					firstChecked = id;

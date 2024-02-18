@@ -70,7 +70,7 @@ const getTokenAndSendMessages = async (receivers, title, multiple = false) => {
 };
 
 const scheduleJob = (jobName, day, hour, minute, receivers, titles) => {
-	return schedule.scheduleJob(jobName, { dayOfWeek: day, hour, minute }, async function () {
+	return schedule.scheduleJob(jobName, { dayOfWeek: day, hour, minute }, async () => {
 		for (const title of titles) {
 			await getTokenAndSendMessages(receivers, title);
 		}
