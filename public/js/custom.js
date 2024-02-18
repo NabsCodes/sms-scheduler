@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function () {
 	setInterval(() => {
 		const now = new Date();
 		const hour = `${now.getHours()}`.padStart(2, 0);
@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		document.getElementById("year").textContent = now.getFullYear();
 		// Get the current date and day
 		// const amPm = now.getHours() >= 12 ? 'PM' : 'AM';
-		document.getElementById('currentDay').textContent = `${days[now.getDay()]}, ${hour}:${min}`;
+		document.getElementById('currentDay').textContent = days[now.getDay()] + ', ' + `${hour}:${min}`;
 	});
 
 	const theme = localStorage.getItem('theme');
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		label.textContent = 'Light Mode';
 	}
 
-	checkbox.addEventListener('change', () => {
+	checkbox.addEventListener('change', function () {
 		if (this.checked) {
 			body.setAttribute('data-bs-theme', 'dark');
 			localStorage.setItem('theme', 'dark');
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	let firstChecked = null;
 
 	function addCheckboxListener(id, key) {
-		document.getElementById(id).addEventListener('click', () => {
+		document.getElementById(id).addEventListener('click', function () {
 			if (this.checked) {
 				if (!firstChecked) {
 					firstChecked = id;
