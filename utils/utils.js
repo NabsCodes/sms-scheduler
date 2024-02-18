@@ -42,7 +42,8 @@ const sendBulkSMS = async (token, message) => {
 			counter++;
 			console.log(`Message sent successfully. Total messages sent: ${counter}`);
 		} else {
-			console.error(`Error sending message: ${response.data.message}`);
+			// console.error(`Error sending message: ${response.data.message}`);
+			console.error(`Error sending message: ${response.data}`);
 		}
 
 	} catch (error) {
