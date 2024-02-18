@@ -8,7 +8,8 @@ const methodOverride = require('method-override');
 const ExpressError = require('./utils/ExpressError');
 require('dotenv').config();
 
-const dbUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/sms-scheduler';
+// const dbUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/sms-scheduler';
+const dbUri = 'mongodb://localhost:27017/sms-scheduler';
 mongoose.connect(dbUri)
 	.then(() => console.log('Connected to DB!'))
 	.catch(error => console.log(`Error Connecting to Mongo: ${error.message}`));
