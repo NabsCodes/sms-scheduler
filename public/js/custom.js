@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		const now = new Date();
 		const hour = `${now.getHours()}`.padStart(2, 0);
 		const min = `${now.getMinutes()}`.padStart(2, 0);
-		let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+		const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 		// Get the current year
 		document.getElementById("year").textContent = now.getFullYear();
 		// Get the current date and day

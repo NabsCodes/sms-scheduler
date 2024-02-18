@@ -70,7 +70,7 @@ const getTokenAndSendMessages = async (receivers, title, multiple = false) => {
 
 const scheduleJob = (jobName, day, hour, minute, receivers, titles) => {
 	return schedule.scheduleJob(jobName, { dayOfWeek: day, hour, minute }, async function () {
-		for (let title of titles) {
+		for (const title of titles) {
 			await getTokenAndSendMessages(receivers, title);
 		}
 	});
@@ -89,7 +89,7 @@ const checkAndUpdateTaskStatus = async (scheduledSms) => {
 
 setInterval(async () => {
 	const scheduledSmsList = await ScheduledSms.find({ status: 'Active' });
-	for (let scheduledSms of scheduledSmsList) {
+	for (const scheduledSms of scheduledSmsList) {
 		await checkAndUpdateTaskStatus(scheduledSms);
 	}
 }, 60 * 1000);
