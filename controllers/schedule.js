@@ -38,8 +38,8 @@ const scheduleTask = async (req, res) => {
 		} else if (startTime >= endTime) {
 			return flashAndRedirect(req, res, 400, 'Start time must be before end time');
 		} else {
-			const [startHour, startMinute] = startTime.split(':').map(item => +item); // Split the start and end times
-			const [endHour, endMinute] = endTime.split(':').map(item => +item); // Split the start and end times
+			const [startHour, startMinute] = startTime.split(':').map(item => Number(item)); // Split the start and end times
+			const [endHour, endMinute] = endTime.split(':').map(item => Number(item)); // Split the start and end times
 
 			const startMinutes = startHour * 60 + startMinute;  // Convert the start and end times to minutes
 			const endMinutes = endHour * 60 + endMinute;  // Convert the start and end times to minutes
@@ -57,7 +57,7 @@ const scheduleTask = async (req, res) => {
 
 				// Schedule the remaining tasks if there is an interval
 				if (interval) {
-					const intervalMinutes = +(interval);
+					const intervalMinutes = Number(interval);
 					let nextMinutes = startMinutes + intervalMinutes; // Calculate the next task time
 
 					while (nextMinutes < endMinutes) {
