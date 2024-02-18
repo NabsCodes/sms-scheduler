@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		document.getElementById("year").textContent = now.getFullYear();
 		// Get the current date and day
 		// const amPm = now.getHours() >= 12 ? 'PM' : 'AM';
-		document.getElementById('currentDay').textContent = days[now.getDay()] + ', ' + `${hour}:${min}`;
+		document.getElementById('currentDay').textContent = `${days[now.getDay()]}, ${hour}:${min}`;
 	});
 
 	const theme = localStorage.getItem('theme');

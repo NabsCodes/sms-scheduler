@@ -11,7 +11,7 @@ require('dotenv').config();
 const dbUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/sms-scheduler';
 mongoose.connect(dbUri)
 	.then(() => console.log('Connected to DB!'))
-	.catch(error => console.log('Error Connecting to Mongo: ' + error.message));
+	.catch(error => console.log(`Error Connecting to Mongo: ${error.message}`));
 
 
 const app = express();
