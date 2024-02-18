@@ -1,174 +1,174 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>SMS Schedule</title>
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
-		<link rel="stylesheet" href="css/bootstrap.min.css" />
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-		<link rel="stylesheet" href="/css/custom.css" />
-	</head>
-	<body class="d-flex flex-column min-vh-100 bg-body-tertiary p-1" data-bs-theme="light">
-		<nav class="navbar mb-1 d-flex flex-row">
-			<div class="container-fluid">
-				<!-- <a class="navbar-brand px-1" href="#"><img src="/images/New MKEL Blue.png" alt="Mkel logo" width="60" height="44" class="d-inline-block align-text-top" /></a> -->
-				<a class="navbar-brand px-1" href="#">SMS Schedule</a>
+<% layout('layouts/boilerplate') %>
+<div class="row">
+  <div class="col-lg-12 col-xl-6 mb-md-3 mb-lg-3">
+    <%- include('./partials/createflash.ejs') %>
+    <div class="card shadow">
+      <div class="card-body">
+        <h1 class="text-start fs-2 mb-2 fw-medium">SMS Schedule</h1>
+        <p class="text-start">Schedule SMS to be sent at a later time</p>
+        <form action="/" method="post" class="mt-3">
+          <div class="form-group mb-2">
+            <div class="d-flex flex-row justify-content-between">
+              <label class="mb-2 fw-bold">Set Day</label>
+              <label class="mb-2 fw-bold">Current Day & Time: <span class="fst-italic fw-light" id="currentDay"></span></label>
+            </div>
 
-				<div class="form-check form-switch form-check-reverse">
-					<input class="form-check-input" type="checkbox" id="flexSwitchCheckReverse" />
-					<label class="form-check-label" for="flexSwitchCheckReverse">Dark Mode</label>
-				</div>
-			</div>
-		</nav>
+            <div class="row">
+              <div class="col text-center">
+                <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+                  <input class="btn-check" type="checkbox" autocomplete="off" name="day" value="0" id="sunday" />
+                  <label class="btn btn-outline-primary days" for="sunday">Sunday</label>
 
-		<div class="container">
-			<div class="row">
-				<div class="col-md-6">
-					<%- include('./flash.ejs') %>
-					<div class="card shadow">
-						<div class="card-body">
-							<h1 class="text-start fs-2 mb-2">SMS Schedule</h1>
-							<p class="text-start">Schedule SMS to be sent at a later time</p>
-							<form action="/" method="post" class="mt-3">
-								<div class="form-group mb-2">
-									<label class="mb-2 fw-bold">Set Day</label>
-									<div class="row">
-										<div class="col text-center">
-											<div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
-												<input class="btn-check" type="checkbox" autocomplete="off" name="day" value="0" id="sunday" />
-												<label class="btn btn-outline-primary" for="sunday">Sunday</label>
+                  <input class="btn-check" type="checkbox" autocomplete="off" name="day" value="1" id="monday" />
+                  <label class="btn btn-outline-primary days" for="monday">Monday</label>
 
-												<input class="btn-check" type="checkbox" autocomplete="off" name="day" value="1" id="monday" />
-												<label class="btn btn-outline-primary" for="monday">Monday</label>
+                  <input class="btn-check" type="checkbox" autocomplete="off" name="day" value="2" id="tuesday" />
+                  <label class="btn btn-outline-primary days" for="tuesday">Tuesday</label>
 
-												<input class="btn-check" type="checkbox" autocomplete="off" name="day" value="2" id="tuesday" />
-												<label class="btn btn-outline-primary" for="tuesday">Tuesday</label>
+                  <input class="btn-check" type="checkbox" autocomplete="off" name="day" value="3" id="wednesday" />
+                  <label class="btn btn-outline-primary days" for="wednesday">Wednesday</label>
 
-												<input class="btn-check" type="checkbox" autocomplete="off" name="day" value="3" id="wednesday" />
-												<label class="btn btn-outline-primary" for="wednesday">Wednesday</label>
+                  <input class="btn-check" type="checkbox" autocomplete="off" name="day" value="4" id="thursday" />
+                  <label class="btn btn-outline-primary days" for="thursday">Thursday</label>
 
-												<input class="btn-check" type="checkbox" autocomplete="off" name="day" value="4" id="thursday" />
-												<label class="btn btn-outline-primary" for="thursday">Thursday</label>
+                  <input class="btn-check" type="checkbox" autocomplete="off" name="day" value="5" id="friday" />
+                  <label class="btn btn-outline-primary days" for="friday">Friday</label>
 
-												<input class="btn-check" type="checkbox" autocomplete="off" name="day" value="5" id="friday" />
-												<label class="btn btn-outline-primary" for="friday">Friday</label>
+                  <input class="btn-check" type="checkbox" autocomplete="off" name="day" value="6" id="saturday" />
+                  <label class="btn btn-outline-primary days" for="saturday">Saturday</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group mb-2">
+            <label class="mb-2 fw-bold" for="interval">Interval</label>
+            <select id="interval" name="interval" class="form-control">
+              <option value="" disabled selected>Choose Interval</option>
+              <option value="1">1 minute(s)</option>
+              <option value="2">2 minute(s)</option>
+              <option value="5">5 minute(s)</option>
+              <option value="60">1 hour(s)</option>
+              <option value="120">2 hour(s)</option>
+              <option value="180">3 hour(s)</option>
+              <!-- Add more options as needed -->
+            </select>
+          </div>
+          <div class="form-group mb-2">
+            <label class="mb-2 fw-bold" for="startTime">Start Time</label>
+            <input type="time" id="startTime" name="startTime" class="form-control" />
+          </div>
 
-												<input class="btn-check" type="checkbox" autocomplete="off" name="day" value="6" id="saturday" />
-												<label class="btn btn-outline-primary" for="saturday">Saturday</label>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="form-group mb-2">
-									<label class="mb-2 fw-bold" for="interval">Interval</label>
-									<select id="interval" name="interval" class="form-control">
-										<option value="">No Interval</option>
-										<option value="1">1 minute</option>
-										<option value="2">2 minutes</option>
-										<option value="5">5 minutes</option>
-										<option value="60">1 hour</option>
-										<option value="120">2 hours</option>
-										<option value="180">3 hours</option>
-										<!-- Add more options as needed -->
-									</select>
-								</div>
-								<div class="form-group mb-2">
-									<label class="mb-2 fw-bold" for="startTime">Start Time</label>
-									<input type="time" id="startTime" name="startTime" class="form-control" />
-								</div>
+          <div class="form-group mb-2">
+            <label class="mb-2 fw-bold" for="endTime">End Time</label>
+            <input type="time" id="endTime" name="endTime" class="form-control" />
+          </div>
 
-								<div class="form-group mb-2">
-									<label class="mb-2 fw-bold" for="endTime">End Time (Optional)</label>
-									<input type="time" id="endTime" name="endTime" class="form-control" />
-								</div>
+          <div class="form-group mb-2">
+            <label class="mb-2 fw-bold" for="message">Choose SenderID</label>
+            <div class="row">
+              <div class="col text-center">
+                <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+                  <input class="btn-check" type="checkbox" autocomplete="off" name="title" value="JAIZ BANK" id="jaizbank" />
+                  <label class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Auto-fill for JAIZ BANK" data-bs-custom-class="custom-tooltip" for="jaizbank">Jaiz Bank</label>
 
-								<div class="form-group mb-2">
-									<label class="mb-2 fw-bold" for="message">Choose SenderID</label>
-									<div class="row">
-										<div class="col text-center">
-											<div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
-												<input class="btn-check" type="checkbox" autocomplete="off" name="title" value="JAIZ BANK" id="jaizbank" />
-												<label class="btn btn-outline-primary" for="jaizbank">Jaiz Bank</label>
+                  <input class="btn-check" type="checkbox" autocomplete="off" name="title" value="PROVIDUS" id="providus" />
+                  <label class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Auto-fill for PROVIDUS" data-bs-custom-class="custom-tooltip" for="providus">Providus</label>
 
-												<input class="btn-check" type="checkbox" autocomplete="off" name="title" value="PROVIDUS" id="providus" />
-												<label class="btn btn-outline-primary" for="providus">Providus</label>
+                  <input class="btn-check" type="checkbox" autocomplete="off" name="title" value="PAYREP" id="payrep" />
+                  <label class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Auto-fill for PAYREP" for="payrep">Payrep</label>
+                </div>
+              </div>
+            </div>
+          </div>
 
-												<input class="btn-check" type="checkbox" autocomplete="off" name="title" value="PAYREP" id="payrep" />
-												<label class="btn btn-outline-primary" for="payrep">Payrep</label>
-											</div>
-										</div>
-									</div>
-								</div>
+          <div class="form-group mb-2">
+            <label class="mb-2 fw-bold" for="message">Enter Phone Numbers</label>
+            <textarea id="message" name="message" class="form-control" rows="3" placeholder="Eg: 2348033531332, 2348122353161"></textarea>
+          </div>
 
-								<div class="form-group mb-2">
-									<label class="mb-2 fw-bold" for="message">Enter Phone Numbers</label>
-									<textarea id="message" name="message" class="form-control" rows="3" placeholder="Eg: 2348033531332, 2348122353161"></textarea>
-								</div>
+          <div class="form-group mt-3 text-center d-grid">
+            <input type="submit" value="Submit" class="btn btn-primary" />
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-12 col-xl-6">
+    <%- include('./partials/scheduledflash.ejs') %>
+    <div class="card shadow">
+      <div class="card-body">
+        <h1 class="text-start fs-2 mb-2 fw-medium">Scheduled SMS</h1>
+        <p class="text-start">Monitor the Status of each Scheduled SMS</p>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <% if (scheduledSms.length === 0) { %>
+            <div class="alert alert-info text-center mb-0">No Scheduled SMS</div>
+            <% } %>
+            <thead class="<%= scheduledSms.length === 0 ? 'hidden' : '' %>">
+              <tr>
+                <th class="align-middle text-center" scope="col">Day(s)</th>
+                <th class="align-middle text-center" scope="col">Interval</th>
+                <th class="align-middle text-center" scope="col">Start Time</th>
+                <th class="align-middle text-center" scope="col">End Time</th>
+                <th class="align-middle text-center" scope="col">SenderID(s)</th>
+                <th class="align-middle text-center" scope="col">Phone Number(s)</th>
+                <th class="align-middle text-center" scope="col">Status</th>
+                <th class="align-middle text-center" scope="col">Action</th>
+              </tr>
+            </thead>
+            <% scheduledSms.forEach(sms => { %>
+            <tbody>
+              <% 
+									const intervalDisplay = {
+										'1': '1 minute(s)',
+   									'2': '2 minute(s)',
+    								'5': '5 minute(s)',
+    								'60': '1 hour(s)',
+    								'120': '2 hour(s)',
+    								'180': '3 hour(s)'
+									}; 
+									%>
+              <td class="align-middle text-center"><%- sms.day.map(day => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][day]).join('<br>') %></td>
+              <td class="align-middle text-center"><%= intervalDisplay[sms.interval] %></td>
+              <td class="align-middle text-center"><%= sms.startTime %></td>
+              <td class="align-middle text-center"><%= sms.endTime %></td>
+              <td class="align-middle text-center"><%= sms.senderId.join('\n') %></td>
+              <td class="align-middle text-center"><%= sms.receivers.join('\n') %></td>
+              <td class="align-middle text-center">
+                <span class="badge <%= sms.status === 'Active' ? 'bg-success' : 'bg-danger' %>"><%= sms.status %></span>
+              </td>
+              <td class="align-middle text-center">
+                <form action="/<%= sms._id %>?_method=DELETE" method="POST">
+                  <!-- Button trigger modal -->
+                  <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="bi bi-trash"></i>
+                  </button>
 
-								<div class="form-group mt-3 text-center d-grid">
-									<input type="submit" value="Submit" class="btn btn-primary" />
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-6">
-					<div class="card shadow">
-						<div class="card-body">
-							<div class="alert alert-info text-center">No Scheduled SMS</div>
-							<h1 class="text-start fs-2 mb-2">Scheduled SMS</h1>
-							<p class="text-start">Monitor the Status of each Scheduled SMS</p>
-							<div class="table-responsive">
-								<table class="table table-striped table">
-									<thead>
-										<tr>
-											<th class="align-middle text-center" scope="col">Day</th>
-											<th class="align-middle text-center" scope="col">Interval</th>
-											<th class="align-middle text-center" scope="col">Start Time</th>
-											<th class="align-middle text-center" scope="col">End Time</th>
-											<th class="align-middle text-center" scope="col">SenderID</th>
-											<th class="align-middle text-center" scope="col">Phone Numbers</th>
-											<th class="align-middle text-center" scope="col">Status</th>
-											<th class="align-middle text-center" scope="col">Action</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td class="align-middle text-center">Monday</td>
-											<td class="align-middle text-center">1 minute</td>
-											<td class="align-middle text-center">12:00 PM</td>
-											<td class="align-middle text-center">1:00 PM</td>
-											<td class="align-middle text-center">Jaiz Bank</td>
-											<td class="align-middle text-center">2348033531332, 2348122353161</td>
-											<td class="align-middle text-center">
-												<span class="badge bg-success">Active</span>
-											</td>
-											<td class="align-middle text-center">
-												<button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<footer class="footer mt-3 py-3 text-center">
-			<div class="container">
-				<span class="float-right">
-					&copy; <span id="year"></span> Developed by <a href="mailto:hassanhauda@gmail.com" class="link-primary text-decoration-none">Hassan Umar</a>. All rights reserved.
-					<a href="https://github.com/NabsCodes" target="_blank">
-						<i class="bi bi-github link-primary"></i>
-					</a>
-				</span>
-			</div>
-		</footer>
-
-		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
-		<script src="/js/custom.js"></script>
-	</body>
-</html>
+                  <!-- Modal -->
+                  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-4" id="deleteModalLabel"> <i class="bi bi-exclamation-triangle-fill text-danger"></i> Confirm Delete</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-start">
+                          Are you sure you want to delete this scheduled SMS?
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+                          <button type="submit" class="btn btn-danger">Delete</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </td>
+            </tbody>
+            <% }) %>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

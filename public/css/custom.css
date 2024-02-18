@@ -1,5 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap");
 
+:root {
+	--bd-violet-bg: #007ea7;
+	--bs-white: #ffffff;
+}
+
 body {
 	font-family: "Lato", sans-serif;
 }
@@ -18,12 +23,21 @@ body {
 	justify-content: space-between;
 }
 
+.hidden {
+	display: none;
+}
+
+.custom-tooltip {
+	--bs-tooltip-bg: var(--bd-violet-bg);
+	--bs-tooltip-color: var(--bs-white);
+}
+
 @media (max-width: 2000px) {
 	.btn-group {
 		flex-wrap: wrap;
 		justify-content: center;
 	}
-	.btn-group .btn {
+	.btn-group .days {
 		margin-bottom: 10px;
 	}
 }

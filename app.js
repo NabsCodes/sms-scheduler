@@ -1,20 +1,26 @@
 const express = require('express');
-const app = express();
 const mongoose = require('mongoose');
-// const messages = require('./messages');
 const session = require('express-session');
 const flash = require('connect-flash');
-const { scheduleJob } = require('./utils');
+const ejsMate = require('ejs-mate');
+const scheduleRouter = require('./router/schedule');
+const methodOverride = require('method-override');
+const ExpressError = require('./utils/ExpressError');
 require('dotenv').config();
 
-mongoose.connect('mongodb://localhost:27017/sms-scheduler')
+const dbUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/sms-scheduler';
+mongoose.connect(dbUri)
 	.then(() => console.log('Connected to DB!'))
 	.catch(error => console.log('Error Connecting to Mongo: ' + error.message));
 
 
+const app = express();
+
+app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
+app.use(methodOverride('_method'));
 app.use(express.static('./public'));
 app.use(express.urlencoded({ extended: true }));
 
@@ -30,74 +36,21 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.get('/', (req, res) => {
-	res.render('index');
+// Routes
+app.use('/', scheduleRouter);
+
+// Error Handling
+app.all('*', (_req, _res, next) => {
+	next(new ExpressError('Page Not Found', 404));
 });
 
-app.post('/', async (req, res) => {
-	try {
-		let { day, startTime, endTime, interval, title, message } = req.body;
-		console.log(day, startTime, endTime, interval, title, message);
-
-		day = Array.isArray(day) ? day : [day];
-		title = Array.isArray(title) ? title : [title]; // Ensure title is an array
-
-		if (!day || day.length === 0 || !startTime || !interval || !message || !title || title.length === 0) {
-			req.flash('error', 'Please fill in all fields');
-			return res.status(400).redirect('/');
-		} else if (!/^[0-9,\s]*$/.test(message)) {
-			req.flash('error', 'Phone numbers must only contain numbers');
-			return res.status(400).redirect('/');
-		} else if (startTime >= endTime) {
-			req.flash('error', 'Start time must be before end time');
-			return res.status(400).redirect('/');
-		} else {
-			const [startHour, startMinute] = startTime.split(':').map(item => +item);
-			const [endHour, endMinute] = endTime.split(':').map(item => +item);
-
-			const startMinutes = startHour * 60 + startMinute;
-			const endMinutes = endHour * 60 + endMinute;
-			const duration = endMinutes - startMinutes;
-
-			if (interval > duration) {
-				req.flash('error', 'Interval cannot be greater than the duration');
-			} else {
-				const receivers = message.split(',').map(item => item.trim());
-
-				// Schedule a task for each title
-				for (let t of title) {
-					day.forEach(d => scheduleJob(d, startHour, startMinute, receivers, t));
-
-					if (interval) {
-						const intervalMinutes = +(interval);
-						let nextMinutes = startMinutes + intervalMinutes;
-
-						while (nextMinutes < endMinutes) {
-							const nextHour = Math.floor(nextMinutes / 60);
-							const nextMinute = nextMinutes % 60;
-
-							day.forEach(d => scheduleJob(d, nextHour, nextMinute, receivers, t));
-
-							nextMinutes += intervalMinutes;
-						}
-					}
-
-					day.forEach(d => scheduleJob(d, endHour, endMinute, receivers, t));
-				}
-
-				req.flash('success', 'Tasks scheduled!');
-			}
-		}
-
-		return res.status(200).redirect('/');
-	} catch (err) {
-		console.error('Error scheduling tasks:', err);
-		req.flash('error', 'Error scheduling tasks');
-		return res.status(500).redirect('/');
-	}
+app.use((err, _req, res, _next) => {
+	const { statusCode = 500 } = err;
+	if (!err.message) err.message = 'Oh No, Something Went Wrong!';
+	res.status(statusCode).render('error', { err });
 });
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT;
 app.listen(port, () => {
 	console.log(`Server running on port ${port}`);
 });

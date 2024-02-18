@@ -1,14 +1,13 @@
 <% if(messages.success && messages.success.length) {%>
 <div class="alert alert-success alert-dismissible fade show" role="alert">
-	<%= messages.success %>
-	<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  <%= messages.success %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 <% } %>
 <!-- ***** -->
 <% if(messages.error && messages.error.length) {%>
 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-	<%= messages.error %>
-	<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  <%= messages.error %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 <% } %>
-<script src="/js/custom.js"></script>

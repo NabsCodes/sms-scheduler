@@ -1,6 +1,8 @@
 const axios = require('axios');
 const schedule = require('node-schedule');
-const { predefinedMessages } = require('./messages');
+const predefinedMessages = require('../messages');
+
+const ScheduledSms = require('../models/scheduledSms');
 
 const getToken = async () => {
 	try {
@@ -22,6 +24,8 @@ const getToken = async () => {
 	}
 };
 
+let counter = 0; // Define counter outside of the function
+
 const sendBulkSMS = async (token, message) => {
 	try {
 		const response = await axios.post('https://sms.api.oltranz.com/api/v1/sms/send', {
@@ -31,14 +35,15 @@ const sendBulkSMS = async (token, message) => {
 		}, {
 			headers: { 'Authorization': `Bearer ${token}` }
 		});
-		// let counter = 0; //database.successMessages
-		console.log(response.data);
-		// let statusCode = response.data.statusCode;
-		// console.log("This is status code: ", statusCode);
-		// if (statusCode === 200) {
-		// 	counter++;
-		// 	console.log("Message sent successfully", counter);
-		// let messagesSent = 
+
+		// console.log(response.data);
+
+		if (response.data.statusCode === 200) {
+			counter++;
+			console.log(`Message sent successfully. Total messages sent: ${counter}`);
+		} else {
+			console.error(`Error sending message: ${response.data.message}`);
+		}
 
 	} catch (error) {
 		console.error(`Error sending message: ${error}`);
@@ -63,10 +68,31 @@ const getTokenAndSendMessages = async (receivers, title, multiple = false) => {
 	}
 };
 
-const scheduleJob = (day, hour, minute, receivers, title) => {
-	return schedule.scheduleJob({ dayOfWeek: day, hour, minute }, async function () {
-		getTokenAndSendMessages(receivers, title);
+const scheduleJob = (jobName, day, hour, minute, receivers, titles) => {
+	return schedule.scheduleJob(jobName, { dayOfWeek: day, hour, minute }, async function () {
+		for (let title of titles) {
+			await getTokenAndSendMessages(receivers, title);
+		}
 	});
 };
 
-module.exports = { getToken, sendBulkSMS, getTokenAndSendMessages, scheduleJob };
+const checkAndUpdateTaskStatus = async (scheduledSms) => {
+	const currentTime = new Date();
+	const endTime = new Date();
+	const [endHour, endMinute] = scheduledSms.endTime.split(':').map(Number);
+	endTime.setHours(endHour, endMinute);
+
+	if (currentTime >= endTime) {
+		await ScheduledSms.findByIdAndUpdate(scheduledSms._id, { status: 'Inactive' });
+	}
+};
+
+setInterval(async () => {
+	const scheduledSmsList = await ScheduledSms.find({ status: 'Active' });
+	for (let scheduledSms of scheduledSmsList) {
+		await checkAndUpdateTaskStatus(scheduledSms);
+	}
+}, 60 * 1000);
+
+
+module.exports = { scheduleJob, getTokenAndSendMessages };
