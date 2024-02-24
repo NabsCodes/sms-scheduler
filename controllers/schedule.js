@@ -33,11 +33,23 @@ const scheduleTask = async (req, res) => {
 			return flashAndRedirect(req, res, 400, 'Please fill in all fields');
 		} else if (interval === '') {
 			return flashAndRedirect(req, res, 400, 'Interval cannot be blank');
-		} else if (!validator.matches(message, /^234\d{10}(,\s*234\d{10})*$/)) {
-			return flashAndRedirect(req, res, 400, 'Enter valid Nigerian numbers (234 + 10 digits), separated by commas.');
 		} else if (startTime >= endTime) {
 			return flashAndRedirect(req, res, 400, 'Start time must be before end time');
 		} else {
+			const phoneNumbers = splitAndTrim(message); // Split the phone numbers and remove whitespace
+
+			// Check if the phone numbers are valid
+			for (const phoneNumber of phoneNumbers) {
+				if (!/^234\d{10}$/.test(phoneNumber)) {
+					return flashAndRedirect(req, res, 400, 'Enter valid Nigerian numbers, separated by commas. Numbers should start with 234 and be 13 digits long.');
+				}
+			}
+
+			const checkDuplicateNum = new Set(phoneNumbers); // Check for duplicate phone numbers
+			if (checkDuplicateNum.size !== phoneNumbers.length) {
+				return flashAndRedirect(req, res, 400, 'Duplicate phone numbers are not allowed');
+			}
+
 			const [startHour, startMinute] = startTime.split(':').map(item => Number(item)); // Split the start and end times
 			const [endHour, endMinute] = endTime.split(':').map(item => Number(item)); // Split the start and end times
 
@@ -52,6 +64,13 @@ const scheduleTask = async (req, res) => {
 				const receivers = splitAndTrim(message); // Split the phone numbers and remove whitespace
 
 				const jobName = uuidv4(); // Generate a unique job name
+
+				// Check if a task with the same time already exists
+				const existingTask = await ScheduledSms.findOne({ day, startTime, endTime });
+				if (existingTask) {
+					req.flash('deleteError', 'A task is already scheduled for this time');
+					return res.status(400).redirect('/');
+				}
 
 				scheduleJobs(jobName, day, startHour, startMinute, receivers, title); // Schedule the first task
 

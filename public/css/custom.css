@@ -9,6 +9,10 @@ body {
 	font-family: "Lato", sans-serif;
 }
 
+.nav-edit {
+	color: var(--bd-violet-bg);
+}
+
 .fade-out {
 	opacity: 0;
 	transition: opacity 1s ease;

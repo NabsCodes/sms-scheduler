@@ -1,5 +1,6 @@
 const axios = require('axios');
 const schedule = require('node-schedule');
+const events = require('./events');
 const predefinedMessages = require('../messages');
 
 const ScheduledSms = require('../models/scheduledSms');
@@ -19,12 +20,11 @@ const getToken = async () => {
 
 		return response.data.access_token;
 	} catch (error) {
-		console.error(`Error getting token: ${error}`);
+		console.error(`Network error when getting token: ${error}`);
+		events.emit('messageError', { error: "Network error: Can't authenticate token. Please check your connection and try again." });
 		throw error;
 	}
 };
-
-let counter = 0; // Define counter outside of the function
 
 const sendBulkSMS = async (token, message) => {
 	try {
@@ -36,24 +36,26 @@ const sendBulkSMS = async (token, message) => {
 			headers: { 'Authorization': `Bearer ${token}` }
 		});
 
-		// console.log(response.data);
-
 		if (response.data.statusCode === 200) {
-			counter++;
-			console.log(`Message sent successfully. Total messages sent: ${counter}`);
+			console.log('SMS delivered successfully!');
+			events.emit('messageSent', { message: 'SMS delivered successfully!' });
 		} else {
-			// console.error(`Error sending message: ${response.data.message}`);
-			console.error(`Error sending message: ${response.data}`);
+			console.error(`Server error when sending message: ${response.data}`);
+			events.emit('messageError', { error: `Server error: Failed to send SMS. Response data: ${response.data}` });
 		}
 
 	} catch (error) {
-		console.error(`Error sending message: ${error}`);
+		console.error(`Error when sending message: ${error}`);
+		events.emit('messageError', { error: 'Error: Failed to send SMS. Please check the SMS API and try again.' });
 	}
 };
 
-const getTokenAndSendMessages = async (receivers, title, multiple = false) => {
+const getTokenAndSendMessages = async (jobName, receivers, title, multiple = false) => {
 	try {
 		const token = await getToken(); // Get the token
+		if (!token) {
+			throw new Error('Failed to retrieve token');
+		}
 		let messages;
 		if (multiple) {
 			messages = predefinedMessages.map(msg => ({ ...msg, receivers })); // Send all messages
@@ -62,29 +64,37 @@ const getTokenAndSendMessages = async (receivers, title, multiple = false) => {
 			messages = messageObj ? [{ ...messageObj, receivers }] : []; // Send only the selected message
 		}
 		for (const message of messages) {
+			// Check if the job has been cancelled
+			const job = schedule.scheduledJobs[jobName];
+			if (!job) {
+				break;
+			}
+
 			await sendBulkSMS(token, message); // Send each message
 		}
-	} catch (err) {
-		console.error('Error sending messages:', err);
+	} catch (error) {
+		console.error('Error sending messages:', error);
+		events.emit('messageError', { error: 'Error occurred while trying to send messages. Please check the message content, receivers, and your scheduled jobs.' });
 	}
 };
 
 const scheduleJob = (jobName, day, hour, minute, receivers, titles) => {
-	return schedule.scheduleJob(jobName, { dayOfWeek: day, hour, minute }, async () => {
+	return schedule.scheduleJob(jobName, { dayOfWeek: day, hour, minute, tz: 'Africa/Lagos' }, async () => {
 		for (const title of titles) {
-			await getTokenAndSendMessages(receivers, title);
+			await getTokenAndSendMessages(jobName, receivers, title);
 		}
 	});
 };
 
 const checkAndUpdateTaskStatus = async (scheduledSms) => {
-	const currentTime = new Date();
-	const endTime = new Date();
+	const currentTime = new Date(new Date().toLocaleString("en-US", { timeZone: "Africa/Lagos" }));
+	const endTime = new Date(new Date().toLocaleString("en-US", { timeZone: "Africa/Lagos" }));
 	const [endHour, endMinute] = scheduledSms.endTime.split(':').map(Number);
 	endTime.setHours(endHour, endMinute);
 
 	if (currentTime >= endTime) {
 		await ScheduledSms.findByIdAndUpdate(scheduledSms._id, { status: 'Inactive' });
+		events.emit('taskUpdated', { taskId: scheduledSms._id, status: 'Inactive' });
 	}
 };
 
@@ -93,7 +103,7 @@ setInterval(async () => {
 	for (const scheduledSms of scheduledSmsList) {
 		await checkAndUpdateTaskStatus(scheduledSms);
 	}
-}, 60 * 1000);
+});
 
 
 module.exports = { scheduleJob, getTokenAndSendMessages };

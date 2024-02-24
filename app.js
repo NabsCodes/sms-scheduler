@@ -5,10 +5,14 @@ const flash = require('connect-flash');
 const ejsMate = require('ejs-mate');
 const scheduleRouter = require('./router/schedule');
 const methodOverride = require('method-override');
+const http = require('http');
+const { Server } = require('socket.io');
+const events = require('./utils/events');
 const ExpressError = require('./utils/ExpressError');
 require('dotenv').config();
 
-const dbUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/sms-scheduler';
+const dbUri = process.env.MONGODB_URI;
+// || 'mongodb://localhost:27017/sms-scheduler';
 // const dbUri = 'mongodb://localhost:27017/sms-scheduler';
 mongoose.connect(dbUri)
 	.then(() => console.log('Connected to DB!'))
@@ -52,6 +56,26 @@ app.use((err, _req, res, _next) => {
 });
 
 const port = process.env.PORT;
-app.listen(port, () => {
+
+const server = http.createServer(app);
+const io = new Server(server);
+
+io.on('connection', () => {
+	console.log('Client Connected!');
+});
+
+events.on('messageSent', (data) => {
+	io.emit('messageSent', data);
+});
+
+events.on('messageError', (data) => {
+	io.emit('messageError', data);
+});
+
+events.on('taskUpdated', (data) => {
+	io.emit('taskUpdated', data);
+});
+
+server.listen(port, () => {
 	console.log(`Server running on port ${port}`);
 });
