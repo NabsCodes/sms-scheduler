@@ -1,4 +1,3 @@
-const validator = require('validator');
 const { v4: uuidv4 } = require('uuid');
 const schedule = require('node-schedule');
 const { scheduleJob } = require('../utils/utils');
