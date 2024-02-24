@@ -1,15 +1,10 @@
 const axios = require('axios');
-const schedule = require('node-schedule');
 const events = require('./events');
+const schedule = require('node-schedule');
 const predefinedMessages = require('../messages');
 
-const ScheduledSms = require('../models/scheduledSms');
-
-let token = null;
-
+// Get token from the SMS API
 const getToken = async () => {
-	if (token) return token; // Return existing token if it exists
-
 	try {
 		const response = await axios.post('https://auth.oltranz.com/auth/realms/api/protocol/openid-connect/token', {
 			username: process.env.USERNAME,
@@ -31,7 +26,8 @@ const getToken = async () => {
 	}
 };
 
-const sendBulkSMS = async (token, message) => {
+// Send a single SMS
+const sendSingleSMS = async (token, message) => {
 	try {
 		const response = await axios.post('https://sms.api.oltranz.com/api/v1/sms/send', {
 			receivers: message.receivers,
@@ -55,6 +51,7 @@ const sendBulkSMS = async (token, message) => {
 	}
 };
 
+// Get token and send messages
 const getTokenAndSendMessages = async (jobName, receivers, title, multiple = false) => {
 	try {
 		const token = await getToken(); // Get the token
@@ -75,7 +72,7 @@ const getTokenAndSendMessages = async (jobName, receivers, title, multiple = fal
 				break;
 			}
 
-			await sendBulkSMS(token, message); // Send each message
+			await sendSingleSMS(token, message); // Send each message
 		}
 	} catch (error) {
 		console.error('Error sending messages:', error);
@@ -84,32 +81,5 @@ const getTokenAndSendMessages = async (jobName, receivers, title, multiple = fal
 	}
 };
 
-const scheduleJob = (jobName, day, hour, minute, receivers, titles) => {
-	return schedule.scheduleJob(jobName, { dayOfWeek: day, hour, minute, tz: 'Africa/Lagos' }, async () => {
-		for (const title of titles) {
-			await getTokenAndSendMessages(jobName, receivers, title);
-		}
-	});
-};
 
-const checkAndUpdateTaskStatus = async (scheduledSms) => {
-	const currentTime = new Date(new Date().toLocaleString("en-US", { timeZone: "Africa/Lagos" }));
-	const endTime = new Date(new Date().toLocaleString("en-US", { timeZone: "Africa/Lagos" }));
-	const [endHour, endMinute] = scheduledSms.endTime.split(':').map(Number);
-	endTime.setHours(endHour, endMinute);
-
-	if (currentTime >= endTime) {
-		await ScheduledSms.findByIdAndUpdate(scheduledSms._id, { status: 'Inactive' });
-		events.emit('taskUpdated', { taskId: scheduledSms._id, status: 'Inactive' });
-	}
-};
-
-setInterval(async () => {
-	const scheduledSmsList = await ScheduledSms.find({ status: 'Active' });
-	for (const scheduledSms of scheduledSmsList) {
-		await checkAndUpdateTaskStatus(scheduledSms);
-	}
-}, 1000);
-
-
-module.exports = { scheduleJob, getTokenAndSendMessages };
+module.exports = { getTokenAndSendMessages };

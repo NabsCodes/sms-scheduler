@@ -10,6 +10,7 @@ const { Server } = require('socket.io');
 const events = require('./utils/events');
 const ExpressError = require('./utils/ExpressError');
 require('dotenv').config();
+require('./utils/updateTask').startup();
 
 const dbUri = process.env.MONGODB_URI;
 // || 'mongodb://localhost:27017/sms-scheduler';
@@ -23,15 +24,6 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
 	console.log('Database Connected!');
-});
-db.on('disconnected', function () {
-	console.log('Database Disconnected!');
-});
-
-process.on('SIGINT', async () => {
-	await db.close();
-	console.log('Database connection closed.');
-	process.exit(0);
 });
 
 const app = express();

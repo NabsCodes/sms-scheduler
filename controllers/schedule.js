@@ -1,26 +1,26 @@
 const { v4: uuidv4 } = require('uuid');
 const schedule = require('node-schedule');
-const { scheduleJob } = require('../utils/utils');
+const { scheduleJobs } = require('../utils/scheduleJob');
 const ScheduledSms = require('../models/scheduledSms');
 
+// Flash a message and redirect to the home page
 const flashAndRedirect = (req, res, status, message) => {
 	req.flash('error', message);
 	return res.status(status).redirect('/');
 };
 
-const scheduleJobs = (jobName, days, hour, minute, receivers, title) => {
-	days.forEach(d => scheduleJob(jobName, d, hour, minute, receivers, title));
-};
-
+// Split and remove whitespace from a string
 const splitAndTrim = (str) => {
 	return str.split(',').map(item => item.trim());
 };
 
+// Render the schedule page
 const renderSchedule = async (_req, res) => {
 	const scheduledSms = await ScheduledSms.find();
 	res.render('index', { scheduledSms });
 };
 
+// Schedule a task
 const scheduleTask = async (req, res) => {
 	try {
 		let { day, interval, startTime, endTime, title, message } = req.body;
@@ -120,6 +120,7 @@ const scheduleTask = async (req, res) => {
 	}
 };
 
+// Delete a task
 const deleteTask = async (req, res, _next) => {
 	try {
 		const { id } = req.params;
