@@ -11,10 +11,28 @@ const events = require('./utils/events');
 const ExpressError = require('./utils/ExpressError');
 require('dotenv').config();
 
-// const dbUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/sms-scheduler';
-mongoose.connect('mongodb://localhost:27017/sms-scheduler')
+const dbUri = process.env.MONGODB_URI;
+// || 'mongodb://localhost:27017/sms-scheduler';
+// const dbUri = 'mongodb://localhost:27017/sms-scheduler';
+mongoose.connect(dbUri)
 	.then(() => console.log('Connected to DB!'))
 	.catch(error => console.log(`Error Connecting to Mongo: ${error.message}`));
+
+// Set up Mongoose connection event handlers
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function () {
+	console.log('Database Connected!');
+});
+db.on('disconnected', function () {
+	console.log('Database Disconnected!');
+});
+
+process.on('SIGINT', async () => {
+	await db.close();
+	console.log('Database connection closed.');
+	process.exit(0);
+});
 
 const app = express();
 

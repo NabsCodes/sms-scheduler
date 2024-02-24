@@ -132,7 +132,10 @@ const deleteTask = async (req, res, _next) => {
 		}
 
 		// Delete the ScheduledSms document
-		await ScheduledSms.findByIdAndDelete(id);
+		const deletedSms = await ScheduledSms.findByIdAndDelete(id);
+		if (!deletedSms) {
+			throw new Error('Failed to delete ScheduledSms document');
+		}
 
 		req.flash('deleteSuccess', 'Successfully deleted a task!');
 		return res.status(200).redirect('/');

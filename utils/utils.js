@@ -5,7 +5,11 @@ const predefinedMessages = require('../messages');
 
 const ScheduledSms = require('../models/scheduledSms');
 
+let token = null;
+
 const getToken = async () => {
+	if (token) return token; // Return existing token if it exists
+
 	try {
 		const response = await axios.post('https://auth.oltranz.com/auth/realms/api/protocol/openid-connect/token', {
 			username: process.env.USERNAME,
@@ -18,7 +22,8 @@ const getToken = async () => {
 			}
 		});
 
-		return response.data.access_token;
+		token = response.data.access_token; // Store token
+		return token;
 	} catch (error) {
 		console.error(`Network error when getting token: ${error}`);
 		events.emit('messageError', { error: "Network error: Can't authenticate token. Please check your connection and try again." });
@@ -75,6 +80,7 @@ const getTokenAndSendMessages = async (jobName, receivers, title, multiple = fal
 	} catch (error) {
 		console.error('Error sending messages:', error);
 		events.emit('messageError', { error: 'Error occurred while trying to send messages. Please check the message content, receivers, and your scheduled jobs.' });
+		token = null; // Reset token
 	}
 };
 
@@ -103,7 +109,7 @@ setInterval(async () => {
 	for (const scheduledSms of scheduledSmsList) {
 		await checkAndUpdateTaskStatus(scheduledSms);
 	}
-});
+}, 1000);
 
 
 module.exports = { scheduleJob, getTokenAndSendMessages };
