@@ -25,12 +25,16 @@ const scheduleTask = async (req, res) => {
 	try {
 		let { day, interval, startTime, endTime, title, message } = req.body;
 
+		if (day === undefined || !startTime || !endTime || !message || title === undefined) {
+			return flashAndRedirect(req, res, 400, 'Please fill in all fields');
+		}
+
 		day = Array.isArray(day) ? day : [day]; // Ensure day is an array
 		title = Array.isArray(title) ? title : [title]; // Ensure title is an array
 
-		if (!day || day.length === 0 || !startTime || !message || !title || title.length === 0) {
+		if (day.length === 0 || title.length === 0) {
 			return flashAndRedirect(req, res, 400, 'Please fill in all fields');
-		} else if (interval === '') {
+		} else if (interval === undefined || interval === '') {
 			return flashAndRedirect(req, res, 400, 'Interval cannot be blank');
 		} else if (startTime >= endTime) {
 			return flashAndRedirect(req, res, 400, 'Start time must be before end time');
@@ -92,7 +96,7 @@ const scheduleTask = async (req, res) => {
 				scheduleJobs(jobName, day, endHour, endMinute, receivers, title);
 
 				const scheduledSms = new ScheduledSms({
-					day: day.map(item => item.trim()), // Split the phone numbers and remove whitespace
+					day: day.map(item => item.trim()), // Save the current day
 					interval,
 					startTime,
 					endTime,
@@ -110,8 +114,8 @@ const scheduleTask = async (req, res) => {
 
 		return res.status(200).redirect('/');
 	} catch (err) {
-		console.error('Error Scheduling Tasks:', err);
-		req.flash('error', 'Error Scheduling Tasks', err.message);
+		console.error('Error Scheduling Tasks:', err.message);
+		req.flash('error', 'There was an error scheduling your tasks. Please try again later.');
 		return res.status(500).redirect('/');
 	}
 };
@@ -140,8 +144,8 @@ const deleteTask = async (req, res, _next) => {
 		req.flash('deleteSuccess', 'Successfully deleted a task!');
 		return res.status(200).redirect('/');
 	} catch (err) {
-		console.error('Error Deleting Task:', err);
-		req.flash('deleteError', 'Error Deleting Task', err.message);
+		console.error('Error Deleting Task:', err.message);
+		req.flash('deleteError', 'There was an error deleting your tasks. Please try again later.');
 		return res.status(500).redirect('/');
 	}
 };
