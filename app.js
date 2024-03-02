@@ -12,9 +12,9 @@ const ExpressError = require('./utils/ExpressError');
 require('dotenv').config();
 require('./utils/updateTask').startup();
 
-const dbUri = process.env.MONGODB_URI;
+// const dbUri = process.env.MONGODB_URI;
 // || 'mongodb://localhost:27017/sms-scheduler';
-// const dbUri = 'mongodb://localhost:27017/sms-scheduler';
+const dbUri = 'mongodb://localhost:27017/sms-scheduler';
 mongoose.connect(dbUri)
 	.then(() => console.log('Connected to DB!'))
 	.catch(error => console.log(`Error Connecting to Mongo: ${error.message}`));
@@ -27,6 +27,14 @@ db.once('open', function () {
 });
 
 const app = express();
+
+// Force HTTPS on Heroku
+app.use((req, res, next) => {
+	if (process.env.NODE_ENV === 'production' && req.headers['x-forwarded-proto'] !== 'https') {
+		return res.redirect('https://' + req.headers.host + req.url);
+	}
+	next();
+});
 
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
