@@ -1,15 +1,19 @@
 const events = require('../utils/events');
-const ScheduledSms = require('../models/scheduledSms');
+const OltranzSms = require('../models/oltranzSms');
+const MontySms = require('../models/montySms');
+const schedule = require('node-schedule');
+const { scheduledJobs } = require('../utils/scheduleJob');
 
 // Check and update the status of a task
-const checkAndUpdateTaskStatus = async (scheduledSms) => {
-	const currentTime = new Date(new Date().toLocaleString("en-US", { timeZone: "Africa/Lagos" }));
-	const endTime = new Date(new Date().toLocaleString("en-US", { timeZone: "Africa/Lagos" }));
-	const [endHour, endMinute] = scheduledSms.endTime.split(':').map(Number);
-	endTime.setHours(endHour, endMinute);
+const checkAndUpdateTaskStatus = async (scheduledSms, model) => {
+	// Check if the job is in the node-schedule's scheduledJobs object
+	const oltranzJob = schedule.scheduledJobs[scheduledSms.jobName];
 
-	if (currentTime >= endTime) {
-		await ScheduledSms.findByIdAndUpdate(scheduledSms._id, { status: 'Inactive' });
+	// Check if the job is in your scheduledJobs object
+	const job = scheduledJobs[scheduledSms.jobName];
+
+	if (!oltranzJob && !job) {
+		await model.findByIdAndUpdate(scheduledSms._id, { status: 'Inactive' });
 		events.emit('taskUpdated', { taskId: scheduledSms._id, status: 'Inactive' });
 	}
 };
@@ -18,14 +22,22 @@ const checkAndUpdateTaskStatus = async (scheduledSms) => {
 const startup = async () => {
 	try {
 		// Find all tasks in the database that are marked as 'Active'
-		const activeTasks = await ScheduledSms.find({ status: 'Active' });
+		const activeTasksOltranz = await OltranzSms.find({ status: 'Active' });
+		const activeTasksMonty = await MontySms.find({ status: 'Active' });
 
-		// For each active task...
-		for (const task of activeTasks) {
+		// For each active task in OltranzSms...
+		for (const task of activeTasksOltranz) {
 			// ...set the status to 'Inactive'
 			task.status = 'Inactive';
 			await task.save();
+			events.emit('taskUpdated', { taskId: task._id, status: 'Inactive' });
+		}
 
+		// For each active task in MontySms...
+		for (const task of activeTasksMonty) {
+			// ...set the status to 'Inactive'
+			task.status = 'Inactive';
+			await task.save();
 			events.emit('taskUpdated', { taskId: task._id, status: 'Inactive' });
 		}
 	} catch (err) {
@@ -36,15 +48,22 @@ const startup = async () => {
 // Check and update the status of all tasks after every second when the server is running
 setInterval(async () => {
 	try {
-		const scheduledSmsList = await ScheduledSms.find({ status: 'Active' });
-		for (const scheduledSms of scheduledSmsList) {
-			await checkAndUpdateTaskStatus(scheduledSms);
+		// Get all active tasks from both models
+		const scheduledSmsListOltranz = await OltranzSms.find({ status: 'Active' });
+		const scheduledSmsListMonty = await MontySms.find({ status: 'Active' });
+
+		// Check and update the status of each active task in OltranzSms
+		for (const scheduledSms of scheduledSmsListOltranz) {
+			await checkAndUpdateTaskStatus(scheduledSms, OltranzSms);
+		}
+
+		// Check and update the status of each active task in MontySms
+		for (const scheduledSms of scheduledSmsListMonty) {
+			await checkAndUpdateTaskStatus(scheduledSms, MontySms);
 		}
 	} catch (err) {
 		console.error('Error checking and updating task status:', err.message);
 	}
 }, 1000);
-
-
 
 module.exports = { checkAndUpdateTaskStatus, startup };

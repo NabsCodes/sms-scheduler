@@ -1,0 +1,142 @@
+<% layout('layouts/boilerplate-monty') %>
+
+<div class="row">
+  <div class="col-lg-4 col-xl-4 mb-md-3 mb-lg-3">
+    <%- include('./partials/createflash.ejs') %>
+    <div class="card shadow">
+      <div class="card-body">
+
+        <div class="d-flex flex-row justify-content-between">
+          <h1 class="text-start fs-2 mb-2 fw-medium">SMS Schedule</h1>
+          <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Click for Instructions">
+            <button type="button" class="btn btn-outline-primary rounded" data-bs-toggle="modal" data-bs-target="#instructionsModal">
+              <i class="bi bi-person-raised-hand"></i>
+            </button>
+          </div>
+          <!-- Modal -->
+          <%- include('./modals/instructionsMonty.ejs') %>
+
+        </div>
+        <p class="text-start">Schedule SMS to be sent at a later time</p>
+        <form action="/monty" method="post" class="mt-3">
+          <label class="mb-2 fw-bold">Current Day & Time: <span class="fst-italic fw-light" id="currentDay"></span></label>
+          <div class="form-group mb-2">
+            <label class="mb-2 fw-bold" for="date">Select Date</label>
+            <input type="text" id="date" name="date" class="form-control" placeholder="Select a date.." data-toggle="flatpickr" />
+          </div>
+
+          <div class="form-group mb-2">
+            <label class="mb-2 fw-bold" for="interval">Interval</label>
+            <select id="interval" name="interval" class="form-control">
+              <option value="" disabled selected>Choose Interval</option>
+              <option value="1">1 minute(s)</option>
+              <option value="2">2 minute(s)</option>
+              <option value="5">5 minute(s)</option>
+              <option value="60">1 hour(s)</option>
+              <option value="120">2 hour(s)</option>
+              <option value="180">3 hour(s)</option>
+              <!-- Add more options as needed -->
+            </select>
+          </div>
+
+          <div class="form-group mb-2">
+            <label class="mb-2 fw-bold" for="startTime">Start Time</label>
+            <div class="input-group date datetimepicker" id="startTime" data-target-input="nearest">
+              <input type="text" name="startTime" class="form-control datetimepicker-input" data-target="#startTime" placeholder="Select a start time" />
+              <div class="input-group-append" data-target="#startTime" data-toggle="datetimepicker">
+                <div class="input-group-text rounded-start-0"><i class="bi bi-clock"></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group mb-2">
+            <label class="mb-2 fw-bold" for="endTime">End Time</label>
+            <div class="input-group date datetimepicker" id="endTime" data-target-input="nearest">
+              <input type="text" name="endTime" class="form-control datetimepicker-input" data-target="#endTime" placeholder="Select an end time" />
+              <div class="input-group-append" data-target="#endTime" data-toggle="datetimepicker">
+                <div class="input-group-text rounded-start-0"><i class="bi bi-clock"></i></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mb-2">
+            <label class="mb-2 fw-bold" for="message">Choose SenderID</label>
+            <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+              <input class="btn-check" type="checkbox" autocomplete="off" name="title" value="JAIZ BANK" id="jaizbank" />
+              <label class="btn btn-outline-primary rounded" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Auto-fill preset numbers" data-bs-custom-class="custom-tooltip" for="jaizbank">Jaiz Bank</label>
+            </div>
+          </div>
+
+          <div class="form-group mb-2">
+            <label class="mb-2 fw-bold" for="message">Enter Phone Numbers</label>
+            <textarea id="message" name="message" class="form-control" rows="3" placeholder="Eg: 2348000000090, 2348123456789"></textarea>
+          </div>
+
+          <div class="form-group mt-3 text-center">
+            <button type="submit" class="btn btn-primary w-100">Schedule SMS</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-8 col-xl-8">
+    <%- include('./partials/scheduledflash.ejs') %>
+    <div class="card shadow">
+      <div class="card-body">
+        <h1 class="text-start fs-2 mb-2 fw-medium">Scheduled SMS</h1>
+        <p class="text-start">Monitor the Status of each Scheduled SMS</p>
+        <div class="table-responsive">
+          <table id="montyTable" class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Interval</th>
+                <th scope="col">Start Time</th>
+                <th scope="col">End Time</th>
+                <th scope="col">SenderID</th>
+                <th scope="col">Phone Numbers</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% scheduledSms.forEach(sms => { %>
+              <tr id="task-<%= sms._id %>">
+                <% 
+									const intervalDisplay = {
+										'1': '1 minute(s)',
+   									'2': '2 minute(s)',
+    								'5': '5 minute(s)',
+    								'60': '1 hour(s)',
+    								'120': '2 hour(s)',
+    								'180': '3 hour(s)'
+									}; 
+									%>
+                <td class="align-middle"><%= sms.date %></td>
+                <td class="align-middle"><%= intervalDisplay[sms.interval] %></td>
+                <td class="align-middle"><%= sms.startTime %></td>
+                <td class="align-middle"><%= sms.endTime %></td>
+                <td class="align-middle"><%= sms.senderId %></td>
+                <td class="align-middle"><%= sms.receivers[0].split(',').join(', ') %></td>
+                <td class="align-middle">
+                  <span class="badge <%= sms.status === 'Active' ? 'bg-success' : 'bg-danger' %>"><%= sms.status %></span>
+                </td>
+                <td class="align-middle text-center">
+                  <form action="/monty/<%= sms._id %>?_method=DELETE" method="POST">
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-danger btn-sm rounded" data-bs-toggle="modal" data-bs-target="#deleteModal<%= sms._id %>">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                    <!-- Delete Scheduled SMS Modal -->
+                    <%- include('./modals/deleteModal.ejs', {sms: sms}) %>
+                  </form>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

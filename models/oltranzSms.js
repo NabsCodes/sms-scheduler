@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const scheduledSmsSchema = new Schema({
+const oltanzSmsSchema = new Schema({
 	day: [String],
 	interval: String,
 	startTime: String,
@@ -16,6 +16,6 @@ const scheduledSmsSchema = new Schema({
 	}
 });
 
-const ScheduledSms = mongoose.model('ScheduledSms', scheduledSmsSchema);
+const OltranzSms = mongoose.model('OltranzSms', oltanzSmsSchema);
 
-module.exports = ScheduledSms;
+module.exports = OltranzSms;

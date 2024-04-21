@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap");
 
 :root {
-	--bd-violet-bg: #007ea7;
+	--primary-lightblue: #0099d1;
 	--bs-white: #ffffff;
 }
 
@@ -10,7 +10,7 @@ body {
 }
 
 .nav-edit {
-	color: var(--bd-violet-bg);
+	color: var(--primary-lightblue);
 }
 
 .fade-out {
@@ -32,8 +32,167 @@ body {
 }
 
 .custom-tooltip {
-	--bs-tooltip-bg: var(--bd-violet-bg);
+	--bs-tooltip-bg: var(--primary-lightblue);
 	--bs-tooltip-color: var(--bs-white);
+}
+
+.custom-nav {
+	font-weight: 700;
+	color: rgba(0, 153, 209, 0.65);
+	margin-left: 1rem;
+	border-bottom: 0.25rem solid transparent;
+}
+
+.custom-nav:hover {
+	color: rgba(0, 173, 239, 1);
+	border-bottom-color: rgba(0, 173, 239, 1);
+}
+
+.custom-nav.custom-active {
+	color: rgba(0, 173, 239, 1);
+	border-bottom-color: rgba(0, 173, 239, 1);
+}
+
+.custom-toggler .navbar-toggler-icon {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(0, 174, 239, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+.logout-btn {
+	font-weight: 700;
+	color: rgba(255, 0, 0, 0.65); /* Red color */
+	margin-left: 1rem;
+	border-bottom: 0.25rem solid transparent;
+}
+
+.logout-btn:hover,
+.logout-btn:focus {
+	color: rgba(255, 0, 0, 1); /* Brighter red color on hover */
+	border-bottom-color: rgba(255, 0, 0, 1); /* Brighter red color on hover */
+}
+.large-icon {
+	font-size: 5rem; /* Adjust this value to the size you want */
+}
+
+/* Default light mode styles */
+.flatpickr-day.selected {
+	background: #4c899a;
+	border-color: #4c899a;
+}
+
+.flatpickr-day.today {
+	background: #00aeef;
+	border-color: #00aeef;
+}
+
+/* Dark mode styles */
+html[data-bs-theme="dark"] .flatpickr-calendar {
+	background-color: #333;
+	border-color: #333;
+}
+
+html[data-bs-theme="dark"] .flatpickr-month,
+html[data-bs-theme="dark"] .flatpickr-weekday {
+	color: #ffffff; /* White color for the month and weekday text */
+}
+
+html[data-bs-theme="dark"] .flatpickr-day {
+	color: #ffffff; /* White color for the day text */
+}
+
+html[data-bs-theme="dark"] .flatpickr-day.selected {
+	background: #98fb98;
+	color: #000000;
+	border-color: #98fb98;
+}
+
+html[data-bs-theme="dark"] .flatpickr-day.today {
+	background: #00aeef; /* Different color for the current date */
+	color: #000;
+	border-color: #00aeef;
+}
+
+html[data-bs-theme="dark"] .flatpickr-day.flatpickr-day:hover {
+	color: #000000; /* Black color for the current date on hover */
+}
+
+html[data-bs-theme="dark"] .flatpickr-day.flatpickr-disabled {
+	color: #505050; /* Different color for the disabled days */
+}
+
+html[data-bs-theme="dark"] .flatpickr-day.prevMonthDay,
+html[data-bs-theme="dark"] .flatpickr-day.nextMonthDay {
+	color: #868585; /* Lighter color for the days in the next and previous months */
+}
+
+html[data-bs-theme="dark"] .flatpickr-months .flatpickr-prev-month,
+html[data-bs-theme="dark"] .flatpickr-months .flatpickr-next-month {
+	fill: #fff;
+}
+/* Dark mode styles for time picker */
+html[data-bs-theme="dark"] .flatpickr-time {
+	/* background-color: #333; */
+	color: #ffffff;
+}
+
+html[data-bs-theme="dark"] .flatpickr-time input {
+	color: #ffffff;
+}
+
+html[data-bs-theme="dark"] .flatpickr-am-pm {
+	color: #ffffff;
+}
+
+html[data-bs-theme="dark"] .flatpickr-time input:hover,
+.flatpickr-time .flatpickr-am-pm:hover,
+.flatpickr-time input:focus,
+.flatpickr-time .flatpickr-am-pm:focus {
+	background: #a3a3a3;
+}
+
+html[data-bs-theme="dark"] .tempus-dominus-widget {
+	background-color: #333;
+	color: #ffffff;
+}
+
+/* Light mode styles */
+html[data-bs-theme="light"] .tempus-dominus-widget {
+	background-color: #ffffff;
+	color: #000000;
+}
+
+.tempus-dominus-widget.dark .date-container-days div:not(.no-highlight):hover,
+.tempus-dominus-widget.dark .date-container-decades div:not(.no-highlight):hover,
+.tempus-dominus-widget.dark .date-container-months div:not(.no-highlight):hover,
+.tempus-dominus-widget.dark .date-container-years div:not(.no-highlight):hover,
+.tempus-dominus-widget.dark .time-container-clock div:not(.no-highlight):hover,
+.tempus-dominus-widget.dark .time-container-hour div:not(.no-highlight):hover,
+.tempus-dominus-widget.dark .time-container-minute div:not(.no-highlight):hover,
+.tempus-dominus-widget.dark .time-container-second div:not(.no-highlight):hover {
+	background: var(--primary-lightblue);
+}
+
+.tempus-dominus-widget.dark button {
+	background-color: var(--primary-lightblue);
+	border-color: var(--primary-lightblue);
+	color: white;
+}
+
+table.dataTable thead > tr > th.dt-orderable-asc span.dt-column-order::before {
+	line-height: 9px;
+	font-size: 0.5rem;
+	bottom: 45%;
+}
+
+table.dataTable thead > tr > th.dt-orderable-desc span.dt-column-order::after {
+	line-height: 9px;
+	font-size: 0.5rem;
+}
+
+table.dataTable th.dt-type-numeric,
+table.dataTable th.dt-type-date,
+table.dataTable td.dt-type-numeric,
+table.dataTable td.dt-type-date {
+	text-align: left;
 }
 
 @media (max-width: 2000px) {

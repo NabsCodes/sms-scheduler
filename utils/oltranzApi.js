@@ -1,7 +1,7 @@
 const axios = require('axios');
 const events = require('./events');
 const schedule = require('node-schedule');
-const predefinedMessages = require('../messages');
+const generateMessages = require('../messages');
 
 // Get token from the SMS API
 const getToken = async () => {
@@ -17,7 +17,7 @@ const getToken = async () => {
 			}
 		});
 
-		token = response.data.access_token; // Store token
+		const token = response.data.access_token; // Store token locally
 		return token;
 	} catch (error) {
 		console.error(`Network error when getting token: ${error}`);
@@ -28,6 +28,11 @@ const getToken = async () => {
 
 // Send a single SMS
 const sendSingleSMS = async (token, message) => {
+	const now = new Date().toLocaleString("en-US", { timeZone: "Africa/Lagos" }); // Get the current date and timezone
+	const date = new Date(now); // Create a new date object
+	const hour = `${date.getHours()}`.padStart(2, 0); // Get the current hour and pad it with 0 if it's less than 10
+	const min = `${date.getMinutes()}`.padStart(2, 0); // Get the current minute and pad it with 0 if it's less than 10
+	const time = `${hour}:${min}`; // Get the current time
 	try {
 		const response = await axios.post('https://sms.api.oltranz.com/api/v1/sms/send', {
 			receivers: message.receivers,
@@ -38,8 +43,8 @@ const sendSingleSMS = async (token, message) => {
 		});
 
 		if (response.data.statusCode === 200) {
-			console.log('SMS delivered successfully!');
-			events.emit('messageSent', { message: 'SMS delivered successfully!' });
+			console.log(`SMS delivered successfully at ${time}`);
+			events.emit('messageSent', { message: `SMS delivered successfully at ${time}` });
 		} else {
 			console.error(`Server error when sending message: ${response.data}`);
 			events.emit('messageError', { error: `Server error: Failed to send SMS. Response data: ${response.data}` });
@@ -53,6 +58,7 @@ const sendSingleSMS = async (token, message) => {
 
 // Get token and send messages
 const getTokenAndSendMessages = async (jobName, receivers, title, multiple = false) => {
+	const { oltranzMessages } = generateMessages();
 	try {
 		const token = await getToken(); // Get the token
 		if (!token) {
@@ -60,9 +66,9 @@ const getTokenAndSendMessages = async (jobName, receivers, title, multiple = fal
 		}
 		let messages;
 		if (multiple) {
-			messages = predefinedMessages.map(msg => ({ ...msg, receivers })); // Send all messages
+			messages = oltranzMessages.map(msg => ({ ...msg, receivers })); // Send all messages
 		} else {
-			const messageObj = predefinedMessages.find(msg => msg.title === title); // Find the message that matches the selected title
+			const messageObj = oltranzMessages.find(msg => msg.title === title); // Find the message that matches the selected title
 			messages = messageObj ? [{ ...messageObj, receivers }] : []; // Send only the selected message
 		}
 		for (const message of messages) {
@@ -80,6 +86,5 @@ const getTokenAndSendMessages = async (jobName, receivers, title, multiple = fal
 		token = null; // Reset token
 	}
 };
-
 
 module.exports = { getTokenAndSendMessages };
