@@ -18,6 +18,10 @@ body {
 	transition: opacity 1s ease;
 }
 
+.rounded {
+	border-radius: 0.375rem !important;
+}
+
 .btn-outline-primary {
 	border-radius: 0;
 }
