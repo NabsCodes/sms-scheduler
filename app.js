@@ -65,8 +65,7 @@ app.use(session({
 	secret: process.env.SESSION_SECRET,
 	resave: false,
 	saveUninitialized: true,
-	cookie: { secure: false },
-	// store: store
+	cookie: { secure: false }
 }));
 app.use(flash());
 
