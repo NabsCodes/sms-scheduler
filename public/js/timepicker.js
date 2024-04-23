@@ -3,8 +3,12 @@ document.addEventListener('DOMContentLoaded', function () {
 	const startTimePicker = document.querySelector('#startTime');
 	const endTimePicker = document.querySelector('#endTime');
 
+	// const now = new Date(new Intl.DateTimeFormat('en-US', { timeZone: 'Africa/Lagos' }).format(new Date()));
+	// const now = new Date();
+
 	// Initialize Tempus Dominus on the start time and end time input fields
 	new tempusDominus.TempusDominus(startTimePicker, {
+		// min: now,
 		localization: {
 			locale: 'en-NG',
 			format: 'HH:mm',
@@ -26,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 	});
 	new tempusDominus.TempusDominus(endTimePicker, {
+		// min: now,
 		localization: {
 			locale: 'en-NG',
 			format: 'HH:mm',

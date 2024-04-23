@@ -21,7 +21,7 @@ const scheduleTask = async (req, res) => {
 		// Destructure the request body
 		let { date, interval, startTime, endTime, title, message } = req.body;
 		// Log the received data
-		console.log(date, interval, startTime, endTime, title, message);
+		// console.log(date, interval, startTime, endTime, title, message);
 
 		// Validate the received data
 		if (!date || interval === undefined || !startTime || !endTime || title === undefined || !message) {
@@ -33,10 +33,6 @@ const scheduleTask = async (req, res) => {
 			req.flash('error', 'Start time must be before end time');
 			return res.status(400).redirect('/monty');
 		} else {
-			// Convert the date string to a Date object
-			// const dateObj = new Date(date);
-			// // Get only the date part
-			// const dateStr = dateObj.toISOString().split('T')[0];
 
 			// Split the phone numbers and remove whitespace
 			const phoneNumbers = message.split(',').map(item => item.trim());
@@ -141,7 +137,7 @@ const deleteTask = async (req, res, _next) => {
 		if (job) {
 			job.stop();
 			delete scheduledJobs[jobName];
-			console.log(`Job ${jobName} cancelled`);
+			console.log(`Job ${jobName} cancelled and deleted`);
 		}
 
 		// Delete the MontySms document

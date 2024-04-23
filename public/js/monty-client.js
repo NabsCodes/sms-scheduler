@@ -5,9 +5,12 @@ document.addEventListener('DOMContentLoaded', function () {
 		const date = new Date(now);
 		const hour = `${date.getHours()}`.padStart(2, 0);
 		const min = `${date.getMinutes()}`.padStart(2, 0);
+		const day = `${date.getDate()}`.padStart(2, 0);
+		const month = `${date.getMonth() + 1}`.padStart(2, 0); // Months are 0-based in JavaScript
+		const year = date.getFullYear();
 		const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-		// Update the current day and time
-		document.getElementById('currentDay').textContent = days[date.getDay()] + ', ' + `${hour}:${min}:${date.getSeconds()}`;
+		// Update the current day, date, and time
+		document.getElementById('currentDay').textContent = `${days[date.getDay()]}, ${day}/${month}/${year}, ${hour}:${min}:${date.getSeconds()}`;
 	});
 
 	// Enable tooltips

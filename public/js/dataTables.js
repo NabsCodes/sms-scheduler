@@ -12,19 +12,20 @@ document.addEventListener('DOMContentLoaded', function () {
 		scrollY: true,
 		order: [[0, 'asc']],
 		language: {
-			emptyTable: 'No Scheduled SMS'
+			emptyTable: '<div class="alert alert-info text-center mb-0">No Scheduled SMS</div>'
 		},
 		columnDefs: [
-			{ orderable: false, targets: [4, 5, 7] } // Disable ordering on the first and third columns
+			{ orderable: false, targets: [5, 6, 8] } // Disable ordering on some columnss
 		],
 		columns: [
-			{ width: '10%' }, // Date
+			{ width: '0%' }, // S/N
+			{ width: '11%' }, // Date
 			{ width: '10%' }, // Interval
 			{ width: '10%' }, // Start Time
 			{ width: '10%' }, // End Time
 			{ width: '10%' }, // SenderID
 			{ width: '10%' }, // Phone Numbers
-			{ width: '10%' }, // Status
+			{ width: '0%' }, // Status
 			{ width: '0%' }  // Actions
 		]
 	});

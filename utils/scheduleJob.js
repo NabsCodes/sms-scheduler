@@ -65,7 +65,7 @@ const scheduleJobByInterval = (jobName, date, startHour, startMinute, interval, 
 		}
 	};
 
-	// Schedule the job to run every minute
+	// Schedule the job to run every interval minutes
 	let job = cron.schedule(`*/${interval} * * * *`, jobFunction, {
 		scheduled: true,
 		timezone: "Africa/Lagos"
