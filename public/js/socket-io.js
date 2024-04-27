@@ -16,6 +16,7 @@ toastTemplate.innerHTML = `
 		<div class="toast-body"></div>
 	`;
 
+// Listen for success messages from the server
 socket.on('messageSent', (msg) => {
 	// Create a new toast for each message
 	const newToast = toastTemplate.cloneNode(true);
@@ -31,6 +32,7 @@ socket.on('messageSent', (msg) => {
 	}, 5000);
 });
 
+// Listen for error messages from the server
 socket.on('messageError', function (msg) {
 	const newToast = toastTemplate.cloneNode(true);
 	newToast.querySelector('.toast-body').textContent = msg.error;
@@ -43,6 +45,7 @@ socket.on('messageError', function (msg) {
 	}, 5000);
 });
 
+// Listen for task updates from the server and update the status badge
 socket.on('taskUpdated', function (data) {
 	// Find the status badge for the updated task
 	const statusBadge = document.querySelector(`#task-${data.taskId} .badge`);

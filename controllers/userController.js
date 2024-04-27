@@ -38,7 +38,7 @@ const register = async (req, res) => {
 };
 
 // Function to render the login page
-const renderLogin = async (req, res) => {
+const renderLogin = (req, res) => {
 	try {
 		// // If user is already logged in, redirect to home
 		if (req.cookies.token) {
@@ -106,7 +106,7 @@ const handleLogin = async (req, res) => {
 };
 
 // Function to handle user logout
-const logout = async (req, res) => {
+const logout = (req, res) => {
 	try {
 		// Clear the JWT cookie
 		res.clearCookie('token');

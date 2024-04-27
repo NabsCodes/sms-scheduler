@@ -20,7 +20,7 @@ const renderSchedule = async (_req, res) => {
 };
 
 // This function is used to render the send page
-const renderSend = async (_req, res) => {
+const renderSend = (_req, res) => {
 	// Render the send page
 	res.render('montySendSMS', {
 		activePage: 'MontyMobile',
@@ -35,7 +35,7 @@ const sendNow = async (req, res) => {
 		// Get the current time
 		const time = getCurrentTime();
 		// Destructure the request body
-		let { title, message } = req.body;
+		const { title, message } = req.body;
 
 		// Check if the title and message are empty
 		if (!title || !message) {
@@ -231,12 +231,12 @@ const scheduleTask = async (req, res) => {
 				// Create a new scheduled SMS
 				const scheduledSms = new MontySms({
 					jobName,
-					date: date,
+					date,
 					interval,
 					startTime,
 					endTime,
 					senderId: title,
-					receivers: receivers,
+					receivers,
 					status: 'Active'
 				});
 

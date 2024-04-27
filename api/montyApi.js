@@ -1,5 +1,6 @@
 const axios = require('axios');
 const cron = require('node-cron');
+const util = require('util');
 const generateMessages = require('./apiMessages');
 const events = require('../utils/events');
 const getCurrentTime = require('../utils/getCurrentTime');
@@ -17,8 +18,8 @@ const sendSMS = async (destination, source) => {
 	try {
 		const response = await axios.post('https://httpsmsc05.montymobile.com/HTTP/api/Client/SendSMS',
 			{
-				destination: destination,
-				source: source,
+				destination,
+				source,
 				text: montyMessages[0].text,
 				dataCoding: 0
 			},
@@ -34,8 +35,9 @@ const sendSMS = async (destination, source) => {
 			console.log(`SMS delivered successfully at ${time}`);
 			events.emit('messageSent', { message: `SMS delivered successfully at ${time}` });
 		} else {
-			console.log(`Server error when sending message: ${response.data}`);
-			events.emit('messageError', { error: `Server error: Failed to send SMS. Response data: ${response.data}` });
+			let sanitizedData = util.inspect(response.data);
+			console.log(`Server error when sending message: ${sanitizedData}`);
+			events.emit('messageError', { error: `Server error: Failed to send SMS. Response data: ${sanitizedData}` });
 		}
 
 	} catch (error) {

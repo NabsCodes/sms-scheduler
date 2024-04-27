@@ -10,7 +10,7 @@ const resetEmail = async (recipient, subject, link) => {
 		}
 	});
 
-	let htmlContent = `
+	const htmlContent = `
     <div style="font-family: Arial, sans-serif; color: #333;">
         <h2>Password Reset Request</h2>
         <p>You are receiving this because you (or someone else) have requested the reset of the password for your account.</p>

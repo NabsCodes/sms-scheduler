@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
 	// Get the table by its ID
-	let table = document.querySelector('#montyTable');
+	const table = document.querySelector('#montyTable');
 
 	new DataTable(table, {
 		"aLengthMenu": [

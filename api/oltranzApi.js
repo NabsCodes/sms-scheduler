@@ -1,5 +1,6 @@
 const axios = require('axios');
 const schedule = require('node-schedule');
+const util = require('util');
 const events = require('../utils/events');
 const getCurrentTime = require('../utils/getCurrentTime');
 const generateMessages = require('./apiMessages');
@@ -44,8 +45,9 @@ const sendSingleSMS = async (token, message) => {
 			console.log(`SMS delivered successfully at ${time}`);
 			events.emit('messageSent', { message: `SMS delivered successfully at ${time}` });
 		} else {
-			console.error(`Server error when sending message: ${response.data}`);
-			events.emit('messageError', { error: `Server error: Failed to send SMS. Response data: ${response.data}` });
+			let sanitizedData = util.inspect(response.data);
+			console.log(`Server error when sending message: ${sanitizedData}`);
+			events.emit('messageError', { error: `Server error: Failed to send SMS. Response data: ${sanitizedData}` });
 		}
 
 	} catch (error) {

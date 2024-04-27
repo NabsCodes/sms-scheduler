@@ -7,12 +7,12 @@ document.addEventListener('DOMContentLoaded', function () {
 		const min = `${date.getMinutes()}`.padStart(2, 0);
 		const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 		// Update the current day and time
-		document.getElementById('currentDay').textContent = days[date.getDay()] + ', ' + `${hour}:${min}:${date.getSeconds()}`;
+		document.getElementById('currentDay').textContent = `${days[date.getDay()]}, ${hour}:${min}:${date.getSeconds()}`;
 	});
 
 	// Enable tooltips
 	const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-	const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+	[...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
 	// Handle checkbox logic
 	const predefinedNumbers = {
@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	let firstChecked = null;
 
+	// Add listener to checkbox to click and update the message
 	function addCheckboxListener(id, key) {
 		document.getElementById(id).addEventListener('click', function () {
 			if (this.checked) {

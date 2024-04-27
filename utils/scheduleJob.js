@@ -5,7 +5,7 @@ const { getTokenAndSendMessages } = require('../api/oltranzApi');
 const sendSMS = require('../api/montyApi');
 
 // Object to store scheduled jobs
-let scheduledJobs = {};
+const scheduledJobs = {};
 
 // Schedule a job by day of the week
 const scheduleJobByDay = (jobName, day, hour, minute, receivers, titles) => {
@@ -43,19 +43,20 @@ const scheduleJobsByDay = (jobName, days, hour, minute, receivers, title) => {
 const scheduleJobByInterval = (jobName, date, startHour, startMinute, interval, endHour, endMinute, destination, source) => {
 	console.log(jobName, date, startHour, startMinute, interval, endHour, endMinute, destination, source);
 	// Create moment objects for the start and end times in the specified timezone
-	let startTime = moment.tz(`${date} ${startHour}:${startMinute}`, 'YYYY-MM-DD HH:mm', 'Africa/Lagos').format();
+	const startTime = moment.tz(`${date} ${startHour}:${startMinute}`, 'YYYY-MM-DD HH:mm', 'Africa/Lagos').format();
 	console.log(startTime);
-	let endTime = moment.tz(`${date} ${endHour}:${endMinute}`, 'YYYY-MM-DD HH:mm', 'Africa/Lagos');
+	const endTime = moment.tz(`${date} ${endHour}:${endMinute}`, 'YYYY-MM-DD HH:mm', 'Africa/Lagos');
 	console.log(endTime);
 
+	// Create a job function that sends an SMS
 	const jobFunction = async () => {
-		let currentTime = moment.tz('Africa/Lagos');
+		const currentTime = moment.tz('Africa/Lagos');
 		console.log(currentTime);
 
 		// Check if the current date is the same as the scheduled date
 		if (currentTime.isSame(startTime, 'day')) {
 			// Calculate the difference in minutes between the current time and the start time
-			let diff = currentTime.diff(startTime, 'minutes');
+			const diff = currentTime.diff(startTime, 'minutes');
 
 			// Run the job if the current time is before the end time and the difference is a multiple of the interval
 			if (currentTime.isSame(startTime, 'minute') || ((currentTime.isBefore(endTime) || currentTime.isSame(endTime, 'minute')) && diff % interval === 0)) {
@@ -65,6 +66,14 @@ const scheduleJobByInterval = (jobName, date, startHour, startMinute, interval, 
 				} catch (error) {
 					console.error(`Error running job ${jobName}:`, error);
 				}
+			}
+
+			// Get the job from the scheduledJobs object
+			let job = scheduledJobs[jobName];
+			// Check if the job exists
+			if (!job) {
+				console.log(`Job ${jobName} not found`);
+				return;
 			}
 
 			// Cancel the job if the current time is past the end time
@@ -80,7 +89,7 @@ const scheduleJobByInterval = (jobName, date, startHour, startMinute, interval, 
 	};
 
 	// Schedule the job to run every interval minutes
-	let job = cron.schedule(`*/${interval} * * * *`, jobFunction, {
+	const job = cron.schedule(`*/${interval} * * * *`, jobFunction, {
 		scheduled: true,
 		timezone: "Africa/Lagos"
 	});

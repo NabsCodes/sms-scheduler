@@ -1,3 +1,4 @@
+// Export a function that returns the current time in the specified timezone
 function getCurrentTime(timeZone = "Africa/Lagos") {
 	const now = new Date().toLocaleString("en-US", { timeZone }); // Get the current date and timezone
 	const date = new Date(now); // Create a new date object

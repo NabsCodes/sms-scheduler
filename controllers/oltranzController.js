@@ -95,7 +95,7 @@ const scheduleTask = async (req, res) => {
 					startTime,
 					endTime,
 					senderId: title.map(item => item.trim()), // Save the current title
-					receivers: receivers, // Save the receivers
+					receivers, // Save the receivers
 					status: 'Active'
 				});
 

@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	// Enable tooltips
 	const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-	const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+	[...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
 	// Handle checkbox logic
 	const predefinedNumbers = {
@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		// 'JAIZ BANK': ['2348033531332', '2348122353161'],
 	};
 
+	// Add listener to checkbox to click and update the message
 	function addCheckboxListener(id, key) {
 		document.getElementById(id).addEventListener('click', function () {
 			if (this.checked) {
