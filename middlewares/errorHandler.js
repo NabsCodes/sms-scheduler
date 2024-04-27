@@ -16,7 +16,7 @@ const errorHandler = (err, _req, res, _next) => {
 		errorViewName = 'error/500'; // 500 error view
 	}
 
-	res.status(statusCode).render(errorViewName, { err, title: 404 ? 'Page Not Found' : 'Internal Server Error' });
+	res.status(statusCode).render(errorViewName, { err, title: statusCode === 404 ? 'Page Not Found' : 'Internal Server Error' });
 };
 
 module.exports = errorHandler;
