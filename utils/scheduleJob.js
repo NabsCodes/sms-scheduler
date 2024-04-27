@@ -69,7 +69,7 @@ const scheduleJobByInterval = (jobName, date, startHour, startMinute, interval, 
 			}
 
 			// Get the job from the scheduledJobs object
-			let job = scheduledJobs[jobName];
+			const job = scheduledJobs[jobName];
 			// Check if the job exists
 			if (!job) {
 				console.log(`Job ${jobName} not found`);
