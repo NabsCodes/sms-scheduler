@@ -25,7 +25,7 @@ const montyRouter = require('./router/montyRouter');
 
 // MongoDB Connection Setup check if in production or development
 const dbUri = process.env.NODE_ENV === 'production' ? process.env.MONGODB_URI : 'mongodb://localhost:27017/sms-scheduler';
-mongoose.connect(dbUri)
+mongoose.connect(dbUri, { maxPoolSize: 10 })
 	.then(() => console.log('Connected to DB!'))
 	.catch(error => console.log(`Error Connecting to Mongo: ${error.message}`));
 
