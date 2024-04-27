@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
 const ejsMate = require('ejs-mate');
 const methodOverride = require('method-override');
@@ -68,9 +69,11 @@ app.use(session({
 	resave: false,
 	saveUninitialized: true,
 	cookie: { secure: false },
-	store: new session.MemoryStore(),
+	store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI })
 }));
 app.use(flash());
+
+console.log(process.memoryUsage());
 
 // Middleware to pass flash messages to all views
 app.use((req, res, next) => {
