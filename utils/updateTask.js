@@ -50,28 +50,24 @@ const startup = async () => {
 };
 
 // Check and update the status of all tasks when the server is running
-// setInterval(async () => {
-// 	try {
-// 		// Get all active tasks from both models
-// 		const scheduledSmsListOltranz = await OltranzSms.find({ status: 'Active' });
-// 		const scheduledSmsListMonty = await MontySms.find({ status: 'Active' });
+setInterval(async () => {
+	try {
+		// Get all active tasks from both models
+		const scheduledSmsListOltranz = await OltranzSms.find({ status: 'Active' });
+		const scheduledSmsListMonty = await MontySms.find({ status: 'Active' });
 
-// 		// Check and update the status of each active task in OltranzSms
-// 		await Promise.all(scheduledSmsListOltranz.map(scheduledSms =>
-// 			checkAndUpdateTaskStatus(scheduledSms, OltranzSms).catch(err =>
-// 				console.error(`Error updating task status for job ${scheduledSms.jobName}:`, err)
-// 			)
-// 		));
+		// Check and update the status of each active task in OltranzSms
+		for (const scheduledSms of scheduledSmsListOltranz) {
+			await checkAndUpdateTaskStatus(scheduledSms, OltranzSms);
+		}
 
-// 		// Check and update the status of each active task in MontySms
-// 		await Promise.all(scheduledSmsListMonty.map(scheduledSms =>
-// 			checkAndUpdateTaskStatus(scheduledSms, MontySms).catch(err =>
-// 				console.error(`Error updating task status for job ${scheduledSms.jobName}:`, err)
-// 			)
-// 		));
-// 	} catch (err) {
-// 		console.error('Error checking and updating task status:', err.message);
-// 	}
-// });
+		// Check and update the status of each active task in MontySms
+		for (const scheduledSms of scheduledSmsListMonty) {
+			await checkAndUpdateTaskStatus(scheduledSms, MontySms);
+		}
+	} catch (err) {
+		console.error('Error checking and updating task status:', err.message);
+	}
+});
 
 module.exports = { checkAndUpdateTaskStatus, startup };
