@@ -2,7 +2,6 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const session = require('express-session');
-const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
 const ejsMate = require('ejs-mate');
 const methodOverride = require('method-override');
@@ -15,7 +14,7 @@ const cookieParser = require('cookie-parser');
 require('dotenv').config();
 require('./utils/updateTask').startup();
 
-const moment = require('moment-timezone');
+// const moment = require('moment-timezone');
 
 // Import routers
 const userRouter = require('./router/userRouter');
@@ -68,12 +67,9 @@ app.use(session({
 	secret: process.env.SESSION_SECRET,
 	resave: false,
 	saveUninitialized: true,
-	cookie: { secure: false },
-	store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI })
+	cookie: { secure: false }
 }));
 app.use(flash());
-
-console.log(process.memoryUsage());
 
 // Middleware to pass flash messages to all views
 app.use((req, res, next) => {
