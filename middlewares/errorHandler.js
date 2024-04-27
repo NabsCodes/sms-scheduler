@@ -5,8 +5,8 @@ const errorHandler = (err, _req, res, _next) => {
 
 	// Log the error details to the console
 	console.error(`Error: ${err.message}`);
-	// console.error(`Status Code: ${statusCode}`);
-	console.error(`Stack Trace: ${err.stack}`);
+	console.error(`Status Code: ${statusCode}`);
+	// console.error(`Stack Trace: ${err.stack}`);
 
 	// Determine the view name based on the status code
 	let errorViewName;
@@ -16,7 +16,7 @@ const errorHandler = (err, _req, res, _next) => {
 		errorViewName = 'error/500'; // 500 error view
 	}
 
-	res.status(statusCode).render(errorViewName, { err });
+	res.status(statusCode).render(errorViewName, { err, title: 404 ? 'Page Not Found' : 'Internal Server Error' });
 };
 
 module.exports = errorHandler;

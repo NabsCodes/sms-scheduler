@@ -6,15 +6,19 @@ const { scheduledJobs } = require('../utils/scheduleJob');
 
 // Check and update the status of a task
 const checkAndUpdateTaskStatus = async (scheduledSms, model) => {
-	// Check if the job is in the node-schedule's scheduledJobs object
-	const oltranzJob = schedule.scheduledJobs[scheduledSms.jobName];
+	try {
+		// Check if the job is in the node-schedule's scheduledJobs object
+		const oltranzJob = schedule.scheduledJobs[scheduledSms.jobName];
 
-	// Check if the job is in your scheduledJobs object
-	const job = scheduledJobs[scheduledSms.jobName];
+		// Check if the job is in your scheduledJobs object
+		const job = scheduledJobs[scheduledSms.jobName];
 
-	if (!oltranzJob && !job) {
-		await model.findByIdAndUpdate(scheduledSms._id, { status: 'Inactive' });
-		events.emit('taskUpdated', { taskId: scheduledSms._id, status: 'Inactive' });
+		if (!oltranzJob && !job) {
+			await model.findByIdAndUpdate(scheduledSms._id, { status: 'Inactive' });
+			events.emit('taskUpdated', { taskId: scheduledSms._id, status: 'Inactive' });
+		}
+	} catch (error) {
+		console.error(`Error updating task status for job ${scheduledSms.jobName}:`, error);
 	}
 };
 
@@ -45,7 +49,7 @@ const startup = async () => {
 	}
 };
 
-// Check and update the status of all tasks after every second when the server is running
+// Check and update the status of all tasks when the server is running
 setInterval(async () => {
 	try {
 		// Get all active tasks from both models
@@ -53,17 +57,21 @@ setInterval(async () => {
 		const scheduledSmsListMonty = await MontySms.find({ status: 'Active' });
 
 		// Check and update the status of each active task in OltranzSms
-		for (const scheduledSms of scheduledSmsListOltranz) {
-			await checkAndUpdateTaskStatus(scheduledSms, OltranzSms);
-		}
+		await Promise.all(scheduledSmsListOltranz.map(scheduledSms =>
+			checkAndUpdateTaskStatus(scheduledSms, OltranzSms).catch(err =>
+				console.error(`Error updating task status for job ${scheduledSms.jobName}:`, err)
+			)
+		));
 
 		// Check and update the status of each active task in MontySms
-		for (const scheduledSms of scheduledSmsListMonty) {
-			await checkAndUpdateTaskStatus(scheduledSms, MontySms);
-		}
+		await Promise.all(scheduledSmsListMonty.map(scheduledSms =>
+			checkAndUpdateTaskStatus(scheduledSms, MontySms).catch(err =>
+				console.error(`Error updating task status for job ${scheduledSms.jobName}:`, err)
+			)
+		));
 	} catch (err) {
 		console.error('Error checking and updating task status:', err.message);
 	}
-}, 1000);
+});
 
 module.exports = { checkAndUpdateTaskStatus, startup };

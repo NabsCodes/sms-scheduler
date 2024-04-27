@@ -1,16 +1,17 @@
 const axios = require('axios');
-const generateMessages = require('../messages');
+const cron = require('node-cron');
+const generateMessages = require('./apiMessages');
 const events = require('../utils/events');
+const getCurrentTime = require('../utils/getCurrentTime');
 require('dotenv').config();
 
+// Send SMS using Monty API
 const sendSMS = async (destination, source) => {
-	const now = new Date().toLocaleString("en-US", { timeZone: "Africa/Lagos" }); // Get the current date and timezone
-	const date = new Date(now); // Create a new date object
-	const hour = `${date.getHours()}`.padStart(2, 0); // Get the current hour and pad it with 0 if it's less than 10
-	const min = `${date.getMinutes()}`.padStart(2, 0); // Get the current minute and pad it with 0 if it's less than 10
-	const time = `${hour}:${min}`; // Get the current time
-
+	// Get the current time
+	const time = getCurrentTime();
+	// Generate messages
 	const { montyMessages } = generateMessages();
+	// Get the Monty API username and password from the environment variables
 	const username = process.env.MONTY_USERNAME;
 	const password = process.env.MONTY_PASSWORD;
 	try {
@@ -42,5 +43,11 @@ const sendSMS = async (destination, source) => {
 		events.emit('messageError', { error: 'Error: Failed to send SMS. Please check the SMS API and try again.' });
 	}
 };
+
+// let interval = '';
+
+// cron.schedule(`*/${interval} * * * *`, () => {
+// 	sendSMS('2348033531332,2348122353161', 'JAIZ BANK');
+// });
 
 module.exports = sendSMS;

@@ -139,10 +139,15 @@ const resetPasswordLink = async (req, res) => {
 		}
 
 		// Sign a JWT token with the user's ID
-		const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+		const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30m' });
+
+		// Check if the token was successfully created
+		if (!token) {
+			return res.status(500).send('Error generating password reset link');
+		}
 
 		// Create the password reset link with the token
-		const resetLink = `http://localhost:3001/reset-password/${token}`;
+		const resetLink = process.env.NODE_ENV === 'production' ? `https://sms-scheduler.live/reset-password/${token}` : `http://localhost:3001/reset-password/${token}`;
 
 		// Get the user's email
 		const email = user.email;
@@ -158,44 +163,59 @@ const resetPasswordLink = async (req, res) => {
 	}
 };
 
-// Function to
+// Function to reset the user's password
 const resetPassword = async (req, res) => {
-	let userId;
+	const token = req.params.userId; // Get the token from the request parameters
+
+	// Check if the token is valid
+	if (!token) {
+		req.flash('error', 'Invalid reset link');
+		return res.redirect('/login');
+	}
 	try {
-		userId = req.params.userId; // Get the user ID from the request parameters
 		const { newPassword, confirmPassword } = req.body; // Get the new password and confirm password from the request body
 
-		if (newPassword !== confirmPassword) {
-			req.flash('error', 'Passwords do not match!');
-			return res.redirect(`/reset-password/${userId}`);
+		// Check if fields are empty
+		if (!newPassword || !confirmPassword) {
+			req.flash('error', 'Please fill in all fields');
+			return res.redirect(`/reset-password/${token}`);
 		}
 
-		// Decode the token to get the user's ID
-		const decoded = jwt.verify(userId, process.env.JWT_SECRET);
-		// - Find user by ID
+		// Check if the new password and confirm password match
+		if (newPassword !== confirmPassword) {
+			req.flash('error', 'Passwords do not match!');
+			return res.redirect(`/reset-password/${token}`);
+		}
+
+		// Verify the token
+		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+		// Find user by ID
 		const user = await User.findById(decoded.id);
 		console.log('user:', user);
-		// check if user exists
+		// Check if user exists
 		if (!user) {
 			req.flash('error', 'User not found!');
-			return res.redirect(`/reset-password/${userId}`);
+			return res.redirect(`/reset-password/${token}`);
 		}
-		// - Hash the new password
+
+		// Hash the new password
 		const hashedPassword = await bcrypt.hash(newPassword, 10);
-		// - Update user's password
+
+		// Update user's password
 		user.password = hashedPassword;
-		// - Save updated user
+
+		// Save updated user
 		await user.save();
-		// - Set success flash message
-		req.flash('success', 'Password reset successfully');
-		// - Redirect to login page
-		res.redirect('/login');
+
+		// Set success flash message
+		req.flash('success', 'Your password has been reset successfully!');
+		return res.redirect('/login');
 	} catch (error) {
 		console.log(error);
-		// - Set error flash message
-		req.flash('error', 'Error resetting password');
-		// - Redirect back to reset password page
-		res.redirect(`/reset-password/${userId}`);
+		// If the token has expired or is invalid, jwt.verify() will throw an error
+		req.flash('error', 'Error resetting password. The reset link may have expired.');
+		return res.redirect(`/reset-password/${token}`);
 	}
 };
 

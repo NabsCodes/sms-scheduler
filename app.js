@@ -14,6 +14,8 @@ const cookieParser = require('cookie-parser');
 require('dotenv').config();
 require('./utils/updateTask').startup();
 
+const moment = require('moment-timezone');
+
 // Import routers
 const userRouter = require('./router/userRouter');
 const homeRouter = require('./router/homeRouter');
@@ -82,6 +84,10 @@ app.use('/', homeRouter);
 app.use('/', userRouter);
 app.use('/oltranz', oltranzRouter);
 app.use('/monty', montyRouter);
+
+// console.log(moment.tz('Africa/Lagos').format('Z'));
+// console.log(moment.tz('Africa/Lagos').utcOffset());
+// console.log(moment.tz('Africa/Lagos').format());
 
 // app.get('/test500', (req, res) => {
 // 	throw new Error();

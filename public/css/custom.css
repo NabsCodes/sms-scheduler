@@ -77,6 +77,14 @@ body {
 	font-size: 5rem; /* Adjust this value to the size you want */
 }
 
+.flashAlert {
+	transition: opacity 1s ease-in-out;
+}
+
+.footer-monty {
+	font-size: 14px;
+}
+
 /* Default light mode styles */
 .flatpickr-day.selected {
 	background: #4c899a;

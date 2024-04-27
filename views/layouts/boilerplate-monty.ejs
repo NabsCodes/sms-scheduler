@@ -1,79 +1,79 @@
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
+	<head>
+		<!-- Inline theme script -->
+		<script src="/js/inline-theme.js"></script>
+		<!-- Theme JavaScript -->
+		<script src="/js/theme.js"></script>
 
-<head>
-  <!-- Inline theme script -->
-  <script src="/js/inline-theme.js"></script>
-  <!-- Theme JavaScript -->
-  <script src="/js/theme.js"></script>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title><%= title %></title>
+		<!-- Favicon links -->
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png" />
+		<!-- Bootstrap CSS -->
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+		<!-- Bootswatch Theme -->
+		<link rel="stylesheet" href="/css/bootstrap.min.css" />
+		<!-- Bootstrap icons -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+		<!-- Flatpickr CSS -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+		<!-- DataTables CSS -->
+		<link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css" />
+		<!-- Tempus Dominus Styles -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@eonasdan/tempus-dominus@6.9.4/dist/css/tempus-dominus.min.css" crossorigin="anonymous" />
+		<!-- Custom CSS -->
+		<link rel="stylesheet" href="/css/custom.css" />
+		<!-- Theme CSS -->
+		<link rel="stylesheet" href="/css/theme.css" />
+	</head>
 
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= title %></title>
-  <!-- Favicon links -->
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png" />
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
-  <!-- Bootswatch Theme -->
-  <link rel="stylesheet" href="/css/bootstrap.min.css" />
-  <!-- Bootstrap icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-  <!-- Flatpickr CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
-  <!-- DataTables CSS -->
-  <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css" />
-  <!-- Tempus Dominus Styles -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@eonasdan/tempus-dominus@6.9.4/dist/css/tempus-dominus.min.css" crossorigin="anonymous" />
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="/css/custom.css" />
-  <!-- Theme CSS -->
-  <link rel="stylesheet" href="/css/theme.css" />
-</head>
+	<body class="bg-body-tertiary d-flex flex-column vh-100">
+		<!-- Navbar partial -->
+		<%- include('../partials/navbar') %>
+		<!-- Main content -->
+		<main class="container flex-grow-1 py-2">
+			<!-- Body content -->
+			<%- body %>
+		</main>
 
-<body class="bg-body-tertiary d-flex flex-column vh-100">
-  <!-- Navbar partial -->
-  <%- include('../partials/navbar') %>
-  <!-- Main content -->
-  <main class="container flex-grow-1 py-2">
-    <!-- Body content -->
-    <%- body %>
-  </main>
+		<!-- Footer partial -->
+		<%- include('../partials/footer') %>
 
-  <!-- Footer partial -->
-  <%- include('../partials/footer') %>
-
-  <!-- jQuery JS -->
-  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-  <!-- Bootstrap dependencies -->
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
-  <!-- Font Awesome -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/solid.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/fontawesome.min.js"></script>
-  <!-- Moment.js for date manipulation -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-  <!-- DataTables -->
-  <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
-  <script src="https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap5.js"></script>
-  <!-- Flatpickr for date picking -->
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <!-- Tempus Dominus for date and time picking -->
-  <script src="https://cdn.jsdelivr.net/npm/@eonasdan/tempus-dominus@6.9.4/dist/js/tempus-dominus.min.js" crossorigin="anonymous"></script>
-  <!-- Custom scripts -->
-  <!-- Custom Flatpickr JavaScript -->
-  <script src="/js/flatpickr.js"></script>
-  <!-- Custom Flatpickr JavaScript -->
-  <script src="/js/timepicker.js"></script>
-  <!-- Custom DataTables JavaScript -->
-  <script src="/js/dataTables.js"></script>
-  <!-- Custom JavaScript for the client -->
-  <script src="/js/monty-client.js"></script>
-  <!-- Socket.io for real-time communication -->
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/js/socket-io.js"></script>
-  <!-- Custom Socket.io JavaScript -->
-</body>
-
+		<!-- jQuery JS -->
+		<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+		<!-- Bootstrap dependencies -->
+		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+		<!-- Font Awesome -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/solid.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/fontawesome.min.js"></script>
+		<!-- Moment.js for date manipulation -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+		<!-- DataTables -->
+		<script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+		<script src="https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap5.js"></script>
+		<!-- Flatpickr for date picking -->
+		<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+		<!-- Tempus Dominus for date and time picking -->
+		<script src="https://cdn.jsdelivr.net/npm/@eonasdan/tempus-dominus@6.9.4/dist/js/tempus-dominus.min.js" crossorigin="anonymous"></script>
+		<!-- Custom scripts -->
+		<!-- Custom Flatpickr JavaScript -->
+		<script src="/js/flatpickr.js"></script>
+		<!-- Hide Flash Message -->
+		<script src="/js/hideFlash.js"></script>
+		<!-- Custom Flatpickr JavaScript -->
+		<script src="/js/timepicker.js"></script>
+		<!-- Custom DataTables JavaScript -->
+		<script src="/js/dataTables.js"></script>
+		<!-- Custom JavaScript for the client -->
+		<script src="/js/monty-client.js"></script>
+		<!-- Socket.io for real-time communication -->
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="/js/socket-io.js"></script>
+		<!-- Custom Socket.io JavaScript -->
+	</body>
 </html>
