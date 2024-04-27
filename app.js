@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
 const ejsMate = require('ejs-mate');
 const methodOverride = require('method-override');
@@ -67,7 +68,8 @@ app.use(session({
 	secret: process.env.SESSION_SECRET,
 	resave: false,
 	saveUninitialized: true,
-	cookie: { secure: false }
+	cookie: { secure: false },
+	store: MongoStore.create({ mongoUrl: dbUri })
 }));
 app.use(flash());
 

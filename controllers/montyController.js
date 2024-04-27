@@ -43,6 +43,26 @@ const sendNow = async (req, res) => {
 			return res.status(400).redirect('/monty/sendnow');
 		}
 
+		// Split the phone numbers and remove whitespace
+		const phoneNumbers = message.split(',').map(item => item.trim());
+
+		// Validate the phone numbers
+		for (const phoneNumber of phoneNumbers) {
+			if (!/^234\d{10}$/.test(phoneNumber)) {
+				// Flash an error message and redirect if the phone numbers are invalid
+				req.flash('error', 'Enter valid Nigerian numbers, separated by commas. Numbers should start with 234 and be 13 digits long.');
+				return res.status(400).redirect('/monty/sendnow');
+			}
+		}
+
+		// Check for duplicate phone numbers
+		const checkDuplicateNum = new Set(phoneNumbers);
+		if (checkDuplicateNum.size !== phoneNumbers.length) {
+			// Flash an error message and redirect if there are duplicate phone numbers
+			req.flash('error', 'Duplicate phone numbers are not allowed');
+			return res.status(400).redirect('/monty/sendnow');
+		}
+
 		// Send the SMS and flash a success message
 		await sendSMS(message, title);
 		req.flash('success', `SMS delivered successfully at ${time}`);
@@ -68,50 +88,50 @@ const sendNow = async (req, res) => {
 const scheduleTask = async (req, res) => {
 	try {
 		// Destructure the request body
-		// let { date, interval, startTime, endTime, title, message } = req.body;
-		// startTime = moment.tz(startTime, 'HH:mm', 'Africa/Lagos').format('HH:mm');
-		// endTime = moment.tz(endTime, 'HH:mm', 'Africa/Lagos').format('HH:mm');
+		let { date, interval, startTime, endTime, title, message } = req.body;
+		startTime = moment.tz(startTime, 'HH:mm', 'Africa/Lagos').format('HH:mm');
+		endTime = moment.tz(endTime, 'HH:mm', 'Africa/Lagos').format('HH:mm');
 		// date = moment(date).format('YYYY-MM-DD');
 		// let dayOfWeek = moment(date).day();
 		// console.log(dayOfWeek);
 		// // Log the received data
-		// // console.log(date, interval, startTime, endTime, title, message);
-
-		let { date, interval, startTime, endTime, title, message } = req.body;
 		console.log(date, interval, startTime, endTime, title, message);
 
-		// Convert the date and times to moment objects
-		let startDate = moment.tz(date, 'YYYY-MM-DD', 'Africa/Lagos');
-		let startTimeMoment = moment.tz(startTime, 'HH:mm', 'Africa/Lagos');
-		let endTimeMoment = moment.tz(endTime, 'HH:mm', 'Africa/Lagos');
+		// let { date, interval, startTime, endTime, title, message } = req.body;
+		// console.log(date, interval, startTime, endTime, title, message);
+
+		// // Convert the date and times to moment objects
+		// let startDate = moment.tz(date, 'YYYY-MM-DD', 'Africa/Lagos');
+		// let startTimeMoment = moment.tz(startTime, 'HH:mm', 'Africa/Lagos');
+		// let endTimeMoment = moment.tz(endTime, 'HH:mm', 'Africa/Lagos');
 
 		// Extract the various components
-		let second = startTimeMoment.seconds();
-		let minute = startTimeMoment.minutes();
-		let hour = startTimeMoment.hours();
-		let dayOfMonth = startDate.date();
-		let month = startDate.month();
-		let year = startDate.year();
-		let dayOfWeek = startDate.day();
+		// let second = startTimeMoment.seconds();
+		// let minute = startTimeMoment.minutes();
+		// let hour = startTimeMoment.hours();
+		// let dayOfMonth = startDate.date();
+		// let month = startDate.month();
+		// let year = startDate.year();
+		// let dayOfWeek = startDate.day();
 
-		console.log(second, minute, hour, dayOfMonth, month, year, dayOfWeek);
+		// console.log(second, minute, hour, dayOfMonth, month, year, dayOfWeek);
 
 		// Create a cron-style schedule rule
-		let rule = `*/${interval} * * * *`;
+		// let rule = `*/${interval} * * * *`;
 
 		// Define the job function
-		const jobFunction = () => {
-			console.log(`Running job ${title} at ${moment.tz('Africa/Lagos').format()}`);
-		};
+		// const jobFunction = () => {
+		// 	console.log(`Running job ${title} at ${moment.tz('Africa/Lagos').format()}`);
+		// };
 
-		// Convert the start and end times to ISO 8601 strings
-		let startTimeISO = startTimeMoment.format();
-		console.log(startTimeISO);
-		let endTimeISO = endTimeMoment.format();
-		console.log(endTimeISO);
+		// // Convert the start and end times to ISO 8601 strings
+		// let startTimeISO = startTimeMoment.format();
+		// console.log(startTimeISO);
+		// let endTimeISO = endTimeMoment.format();
+		// console.log(endTimeISO);
 
-		// Schedule the job to start at the start time, end at the end time, and recur according to the rule
-		let job = schedule.scheduleJob({ start: new Date(startTimeISO), end: new Date(endTimeISO), rule: rule }, jobFunction);
+		// // Schedule the job to start at the start time, end at the end time, and recur according to the rule
+		// let job = schedule.scheduleJob({ start: new Date(startTimeISO), end: new Date(endTimeISO), rule: rule }, jobFunction);
 
 		// Validate the received data
 		if (!date || interval === undefined || !startTime || !endTime || title === undefined || !message) {

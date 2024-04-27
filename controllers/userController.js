@@ -147,8 +147,7 @@ const resetPasswordLink = async (req, res) => {
 		}
 
 		// Create the password reset link with the token
-		// const resetLink = process.env.NODE_ENV === 'production' ? `https://sms-scheduler.live/reset-password/${token}` : `http://localhost:3001/reset-password/${token}`;
-		const resetLink = `http://localhost:3001/reset-password/${token}`;
+		const resetLink = process.env.NODE_ENV === 'production' ? `https://sms-scheduler.live/reset-password/${token}` : `http://localhost:3001/reset-password/${token}`;
 
 		// Get the user's email
 		const email = user.email;
