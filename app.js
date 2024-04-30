@@ -15,7 +15,7 @@ const cookieParser = require('cookie-parser');
 require('dotenv').config();
 require('./utils/updateTask').startup();
 
-// const moment = require('moment-timezone');
+const moment = require('moment-timezone');
 
 // Import routers
 const userRouter = require('./router/userRouter');
@@ -73,7 +73,7 @@ app.use(session({
 }));
 app.use(flash());
 
-// Middleware to pass flash messages to all views
+// Middleware to pass flash messages to all views 
 app.use((req, res, next) => {
 	res.locals.messages = req.flash(); // Pass flash messages to all views
 	res.locals.returnTo = req.session.returnTo; // Pass the returnTo URL to all views
@@ -87,9 +87,9 @@ app.use('/', userRouter);
 app.use('/oltranz', oltranzRouter);
 app.use('/monty', montyRouter);
 
-// console.log(moment.tz('Africa/Lagos').format('Z'));
-// console.log(moment.tz('Africa/Lagos').utcOffset());
-// console.log(moment.tz('Africa/Lagos').format());
+console.log(moment.tz('Africa/Lagos').format('Z'));
+console.log(moment.tz('Africa/Lagos').utcOffset());
+console.log(moment.tz('Africa/Lagos').format());
 
 // app.get('/test500', (req, res) => {
 // 	throw new Error();
