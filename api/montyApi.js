@@ -32,17 +32,19 @@ const sendSMS = async (destination, source) => {
 			});
 		// console.log(response.data);
 		if (response.data.ErrorDescription === 'Ok') {
-			console.log(`SMS delivered successfully at ${time}`);
-			events.emit('messageSent', { message: `SMS delivered successfully at ${time}` });
+			console.log(`SMS delivered successfully to ${destination}: ${montyMessages[0].text}`);
+			events.emit('messageSent', { message: `SMS delivered successfully to ${destination}: ${montyMessages[0].text}` });
 		} else {
 			const sanitizedData = util.inspect(response.data);
 			console.log(`Server error when sending message: ${sanitizedData}`);
 			events.emit('messageError', { error: `Server error: Failed to send SMS. Response data: ${sanitizedData}` });
+			throw new Error(`Server error: Failed to send SMS. Response data: ${sanitizedData}`);
 		}
 
 	} catch (error) {
 		console.error(`Error when sending message: ${error}`);
 		events.emit('messageError', { error: 'Error: Failed to send SMS. Please check the SMS API and try again.' });
+		throw error;
 	}
 };
 

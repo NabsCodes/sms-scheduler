@@ -4,7 +4,6 @@ const sendSMS = require('../api/montyApi');
 const MontySms = require('../models/montySms');
 const getCurrentTime = require('../utils/getCurrentTime');
 const moment = require('moment-timezone');
-const schedule = require('node-schedule');
 
 // This function is used to render the schedule page
 const renderSchedule = async (_req, res) => {
@@ -63,10 +62,17 @@ const sendNow = async (req, res) => {
 			return res.status(400).redirect('/monty/sendnow');
 		}
 
-		// Send the SMS and flash a success message
-		await sendSMS(message, title);
-		req.flash('success', `SMS delivered successfully at ${time}`);
-		return res.status(200).redirect('/monty/sendnow');
+		try {
+			// Try to send the SMS
+			await sendSMS(message, title);
+			// If successful, flash a success message and redirect to the success page
+			req.flash('success', `SMS delivered successfully at ${time}`);
+			return res.status(200).redirect('/monty/sendnow');
+		} catch (error) {
+			// If an error occurs, flash an error message and redirect the error
+			req.flash('error', error.message);
+			return res.status(500).redirect('/monty/sendnow');
+		}
 	} catch (err) {
 		// Log the error and flash an error message and redirect to the send page
 		console.error('Error Sending SMS:', err);
@@ -89,49 +95,10 @@ const scheduleTask = async (req, res) => {
 	try {
 		// Destructure the request body
 		let { date, interval, startTime, endTime, title, message } = req.body;
-		startTime = moment.tz(startTime, 'HH:mm', 'Africa/Lagos').format('HH:mm');
-		endTime = moment.tz(endTime, 'HH:mm', 'Africa/Lagos').format('HH:mm');
-		// date = moment(date).format('YYYY-MM-DD');
-		// let dayOfWeek = moment(date).day();
-		// console.log(dayOfWeek);
-		// // Log the received data
+		// startTime = moment.tz(startTime, 'HH:mm', 'Africa/Lagos').format('HH:mm');
+		// endTime = moment.tz(endTime, 'HH:mm', 'Africa/Lagos').format('HH:mm');
+		// Log the received data
 		console.log(date, interval, startTime, endTime, title, message);
-
-		// let { date, interval, startTime, endTime, title, message } = req.body;
-		// console.log(date, interval, startTime, endTime, title, message);
-
-		// // Convert the date and times to moment objects
-		// let startDate = moment.tz(date, 'YYYY-MM-DD', 'Africa/Lagos');
-		// let startTimeMoment = moment.tz(startTime, 'HH:mm', 'Africa/Lagos');
-		// let endTimeMoment = moment.tz(endTime, 'HH:mm', 'Africa/Lagos');
-
-		// Extract the various components
-		// let second = startTimeMoment.seconds();
-		// let minute = startTimeMoment.minutes();
-		// let hour = startTimeMoment.hours();
-		// let dayOfMonth = startDate.date();
-		// let month = startDate.month();
-		// let year = startDate.year();
-		// let dayOfWeek = startDate.day();
-
-		// console.log(second, minute, hour, dayOfMonth, month, year, dayOfWeek);
-
-		// Create a cron-style schedule rule
-		// let rule = `*/${interval} * * * *`;
-
-		// Define the job function
-		// const jobFunction = () => {
-		// 	console.log(`Running job ${title} at ${moment.tz('Africa/Lagos').format()}`);
-		// };
-
-		// // Convert the start and end times to ISO 8601 strings
-		// let startTimeISO = startTimeMoment.format();
-		// console.log(startTimeISO);
-		// let endTimeISO = endTimeMoment.format();
-		// console.log(endTimeISO);
-
-		// // Schedule the job to start at the start time, end at the end time, and recur according to the rule
-		// let job = schedule.scheduleJob({ start: new Date(startTimeISO), end: new Date(endTimeISO), rule: rule }, jobFunction);
 
 		// Validate the received data
 		if (!date || interval === undefined || !startTime || !endTime || title === undefined || !message) {
@@ -146,6 +113,7 @@ const scheduleTask = async (req, res) => {
 			// Check the number of currently scheduled tasks
 			const scheduledTaskCount = await MontySms.countDocuments();
 
+			// Check if the maximum number of tasks is already scheduled
 			if (scheduledTaskCount >= 20) {
 				// Flash an error message and redirect if the maximum number of tasks is already scheduled
 				req.flash('deleteError', 'Maximum number of scheduled tasks reached delete any schedulesms');
@@ -227,6 +195,7 @@ const scheduleTask = async (req, res) => {
 
 				// Schedule the tasks
 				scheduleJobByInterval(jobName, date, startHour, startMinute, interval, endHour, endMinute, receivers, title);
+				// scheduleJobByInterval(jobName, date, startTime, endTime, interval, receivers, title);
 
 				// Create a new scheduled SMS
 				const scheduledSms = new MontySms({
