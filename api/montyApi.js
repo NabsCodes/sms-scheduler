@@ -1,5 +1,4 @@
 const axios = require('axios');
-const cron = require('node-cron');
 const util = require('util');
 const generateMessages = require('./apiMessages');
 const events = require('../utils/events');
@@ -32,8 +31,8 @@ const sendSMS = async (destination, source) => {
 			});
 		// console.log(response.data);
 		if (response.data.ErrorDescription === 'Ok') {
-			console.log(`SMS delivered successfully to ${destination}: ${montyMessages[0].text}`);
-			events.emit('messageSent', { message: `SMS delivered successfully to ${destination}: ${montyMessages[0].text}` });
+			console.log(`SMS delivered successfully: ${montyMessages[0].text}`);
+			events.emit('messageSent', { message: `SMS delivered successfully: ${montyMessages[0].text}` });
 		} else {
 			const sanitizedData = util.inspect(response.data);
 			console.log(`Server error when sending message: ${sanitizedData}`);
@@ -47,11 +46,5 @@ const sendSMS = async (destination, source) => {
 		throw error;
 	}
 };
-
-// let interval = '';
-
-// cron.schedule(`*/${interval} * * * *`, () => {
-// 	sendSMS('2348033531332,2348122353161', 'JAIZ BANK');
-// });
 
 module.exports = sendSMS;

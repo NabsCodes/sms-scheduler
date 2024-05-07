@@ -1,3 +1,4 @@
+const { run } = require('heroku');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -6,6 +7,7 @@ const montySmsSchema = new Schema({
 	interval: String,
 	startTime: String,
 	endTime: String,
+	runCount: Number,
 	senderId: String,
 	receivers: [String],
 	jobName: String,

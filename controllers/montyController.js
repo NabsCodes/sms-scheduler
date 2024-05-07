@@ -81,35 +81,30 @@ const sendNow = async (req, res) => {
 	}
 };
 
-// second (0-59)
-// minute (0-59)
-// hour (0-23)
-// date (1-31)
-// month (0-11)
-// year
-// dayOfWeek (0-6) Starting with Sunday
-// tz
-
 // This function is used to schedule tasks
 const scheduleTask = async (req, res) => {
 	try {
 		// Destructure the request body
-		let { date, interval, startTime, endTime, title, message } = req.body;
+		// let { date, interval, startTime, endTime, title, message } = req.body;
+		let { date, interval, startTime, runCount, title, message } = req.body;
+		runCount = Number(runCount);
 		// startTime = moment.tz(startTime, 'HH:mm', 'Africa/Lagos').format('HH:mm');
 		// endTime = moment.tz(endTime, 'HH:mm', 'Africa/Lagos').format('HH:mm');
 		// Log the received data
-		console.log(date, interval, startTime, endTime, title, message);
+		console.log(date, interval, startTime, runCount, title, message);
 
 		// Validate the received data
-		if (!date || interval === undefined || !startTime || !endTime || title === undefined || !message) {
+		if (!date || interval === undefined || !startTime || runCount === undefined || title === undefined || !message) {
 			// Flash an error message and redirect if the data is invalid
 			req.flash('error', 'Please fill in all fields correctly');
 			return res.status(400).redirect('/monty');
-		} else if (startTime >= endTime) {
-			// Flash an error message and redirect if the start time is not before the end time
-			req.flash('error', 'Start time must be before end time');
-			return res.status(400).redirect('/monty');
-		} else {
+		}
+		// else if (startTime >= endTime) {
+		// 	// Flash an error message and redirect if the start time is not before the end time
+		// 	req.flash('error', 'Start time must be before end time');
+		// 	return res.status(400).redirect('/monty');
+		// }
+		else {
 			// Check the number of currently scheduled tasks
 			const scheduledTaskCount = await MontySms.countDocuments();
 
@@ -143,14 +138,14 @@ const scheduleTask = async (req, res) => {
 			// Split the start time to hours and minutes
 			const [startHour, startMinute] = startTime.split(':').map(item => Number(item));
 			// Split the end time to hours and minutes
-			const [endHour, endMinute] = endTime.split(':').map(item => Number(item));
+			// const [endHour, endMinute] = endTime.split(':').map(item => Number(item));
 
 			// Convert the start time to minutes
-			const startMinutes = startHour * 60 + startMinute;
-			// Convert the end time to minutes
-			const endMinutes = endHour * 60 + endMinute;
-			// Calculate the duration of the task in minutes
-			const duration = endMinutes - startMinutes;
+			// const startMinutes = startHour * 60 + startMinute;
+			// // Convert the end time to minutes
+			// const endMinutes = endHour * 60 + endMinute;
+			// // Calculate the duration of the task in minutes
+			// const duration = endMinutes - startMinutes;
 
 			// Convert the date and start time to a moment object in Africa/Lagos timezone
 			const taskDateTime = moment.tz(`${date} ${startTime}`, 'YYYY-MM-DD HH:mm', 'Africa/Lagos');
@@ -165,12 +160,20 @@ const scheduleTask = async (req, res) => {
 				return res.status(400).redirect('/monty');
 			}
 
-			// Check if the interval is greater than the duration of the task
-			if (interval > duration) {
-				// Flash an error message if the interval is greater than the duration
-				req.flash('error', 'Interval cannot be greater than the duration');
+			// Check if the run count is a positive integer
+			if (runCount <= 0) {
+				// Flash an error message if the run count is not a positive number
+				req.flash('error', 'Run count must be a positive number');
 				return res.status(400).redirect('/monty');
-			} else {
+			}
+
+			// // Check if the interval is greater than the duration of the task
+			// if (interval > duration) {
+			// 	// Flash an error message if the interval is greater than the duration
+			// 	req.flash('error', 'Interval cannot be greater than the duration');
+			// 	return res.status(400).redirect('/monty');
+			// } 
+			else {
 				// Receivers are the phone numbers from the message
 				const receivers = message;
 
@@ -178,7 +181,7 @@ const scheduleTask = async (req, res) => {
 				const jobName = uuidv4();
 
 				// Check if a task with the date, start time, end time, and interval already exists
-				const existingTask = await MontySms.findOne({ date, startTime, endTime, status: 'Active', interval });
+				const existingTask = await MontySms.findOne({ date, startTime, runCount, status: 'Active', interval });
 				// const existingTask = await MontySms.findOne({
 				// 	date,
 				// 	status: 'Active',
@@ -189,12 +192,12 @@ const scheduleTask = async (req, res) => {
 				// });
 				if (existingTask) {
 					// Flash an error message and redirect if a task with the same time already exists
-					req.flash('deleteError', 'A task is already scheduled for this time or overlaps with the new task');
+					req.flash('deleteError', 'A task is already scheduled for this time and interval or overlaps with the runcount');
 					return res.status(400).redirect('/monty');
 				}
 
 				// Schedule the tasks
-				scheduleJobByInterval(jobName, date, startHour, startMinute, interval, endHour, endMinute, receivers, title);
+				scheduleJobByInterval(jobName, date, startHour, startMinute, interval, runCount, receivers, title);
 				// scheduleJobByInterval(jobName, date, startTime, endTime, interval, receivers, title);
 
 				// Create a new scheduled SMS
@@ -203,7 +206,7 @@ const scheduleTask = async (req, res) => {
 					date,
 					interval,
 					startTime,
-					endTime,
+					runCount,
 					senderId: title,
 					receivers,
 					status: 'Active'
@@ -241,9 +244,9 @@ const deleteTask = async (req, res, _next) => {
 
 		// Cancel all jobs with the same base job name
 		const jobName = scheduledSms.jobName;
-		const job = scheduledJobs[jobName];
-		if (job) {
-			job.stop();
+		const jobs = scheduledJobs[jobName];
+		if (jobs) {
+			jobs.forEach(job => clearTimeout(job));
 			delete scheduledJobs[jobName];
 			console.log(`Job ${jobName} cancelled and deleted`);
 		}

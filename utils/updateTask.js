@@ -11,9 +11,9 @@ const checkAndUpdateTaskStatus = async (scheduledSms, model) => {
 		const oltranzJob = schedule.scheduledJobs[scheduledSms.jobName];
 
 		// Check if the job is in your scheduledJobs object
-		const job = scheduledJobs[scheduledSms.jobName];
+		const montyJob = scheduledJobs[scheduledSms.jobName];
 
-		if (!oltranzJob && !job) {
+		if (!oltranzJob && !montyJob) {
 			await model.findByIdAndUpdate(scheduledSms._id, { status: 'Inactive' });
 			events.emit('taskUpdated', { taskId: scheduledSms._id, status: 'Inactive' });
 		}

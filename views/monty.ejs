@@ -61,7 +61,7 @@
               </div>
             </div>
           </div>
-          <div class="form-group mb-2">
+          <!-- <div class="form-group mb-2">
             <label class="mb-2 fw-bold" for="endTime">End Time</label>
             <div class="input-group date datetimepicker" id="endTime" data-target-input="nearest">
               <input type="text" name="endTime" class="form-control datetimepicker-input" data-target="#endTime" placeholder="Select an end time" />
@@ -69,9 +69,9 @@
                 <div class="input-group-text rounded-start-0"><i class="bi bi-clock"></i></div>
               </div>
             </div>
-          </div>
+          </div> -->
 
-          <!-- <div class="form-group mb-2">
+          <div class="form-group mb-2">
             <label class="mb-2 fw-bold" for="runCount">Run Count</label>
             <select id="runCount" name="runCount" class="form-control">
               <option value="" disabled selected>Choose Run Count</option>
@@ -81,7 +81,7 @@
               <option value="4">4</option>
               <option value="5">5</option>
             </select>
-          </div> -->
+          </div>
 
           <div class="form-group mb-2">
             <label class="mb-2 fw-bold" for="message">Choose SenderID</label>
@@ -118,7 +118,8 @@
                 <th scope="col">Date</th>
                 <th scope="col">Interval</th>
                 <th scope="col">Start Time</th>
-                <th scope="col">End Time</th>
+                <!-- <th scope="col">End Time</th> -->
+                <th scope="col">Run Count</th>
                 <th scope="col">SenderID</th>
                 <th scope="col">Phone Numbers</th>
                 <th scope="col">Status</th>
@@ -148,7 +149,7 @@
                 <td class="align-middle"><%= sms.date %></td>
                 <td class="align-middle"><%= intervalDisplay[sms.interval] %></td>
                 <td class="align-middle"><%= sms.startTime %></td>
-                <td class="align-middle"><%= sms.endTime %></td>
+                <td class="align-middle"><%= sms.runCount %></td>
                 <td class="align-middle"><%= sms.senderId %></td>
                 <td class="align-middle"><%= sms.receivers[0].split(',').join(', ') %></td>
                 <td class="align-middle">
