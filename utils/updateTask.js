@@ -13,10 +13,10 @@ const checkAndUpdateTaskStatus = async (scheduledSms, model) => {
 		// Check if the job is in your scheduledJobs object
 		const montyJob = scheduledJobs[scheduledSms.jobName];
 
-		if (!oltranzJob && !montyJob) {
-			await model.findByIdAndUpdate(scheduledSms._id, { status: 'Inactive' });
-			events.emit('taskUpdated', { taskId: scheduledSms._id, status: 'Inactive' });
-		}
+		// Check if the job is active or inactive then update the status in the database
+		const status = oltranzJob || montyJob ? 'Active' : 'Inactive';
+		await model.findByIdAndUpdate(scheduledSms._id, { status });
+		events.emit('taskUpdated', { taskId: scheduledSms._id, status });
 	} catch (error) {
 		console.error(`Error updating task status for job ${scheduledSms.jobName}:`, error);
 	}
@@ -45,7 +45,7 @@ const startup = async () => {
 			events.emit('taskUpdated', { taskId: task._id, status: 'Inactive' });
 		}
 	} catch (err) {
-		console.error('Error in startup function:', err.message);
+		console.error('Error setting task status on startup:', err.message);
 	}
 };
 
