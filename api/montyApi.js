@@ -2,13 +2,10 @@ const axios = require('axios');
 const util = require('util');
 const generateMessages = require('./apiMessages');
 const events = require('../utils/events');
-const getCurrentTime = require('../utils/getCurrentTime');
 require('dotenv').config();
 
 // Send SMS using Monty API
 const sendSMS = async (destination, source) => {
-	// Get the current time
-	const time = getCurrentTime();
 	// Generate messages
 	const { montyMessages } = generateMessages();
 	// Get the Monty API username and password from the environment variables

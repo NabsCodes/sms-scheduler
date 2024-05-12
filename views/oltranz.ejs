@@ -151,14 +151,10 @@
                   <span class="badge <%= sms.status === 'Active' ? 'bg-success' : 'bg-danger' %>"><%= sms.status %></span>
                 </td>
                 <td class="align-middle text-center">
-                  <form action="/oltranz/<%= sms._id %>?_method=DELETE" method="POST">
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-danger btn-sm rounded" data-bs-toggle="modal" data-bs-target="#deleteModal<%= sms._id %>">
-                      <i class="bi bi-trash"></i>
-                    </button>
-                    <!-- Delete Scheduled SMS Modal -->
-                    <%- include('./modals/deleteModal.ejs', {sms: sms}) %>
-                  </form>
+                  <!-- Button trigger modal -->
+                  <button type="button" class="btn btn-danger btn-sm rounded deleteButton" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="<%= sms._id %>" data-base-route="/oltranz/">
+                    <i class="bi bi-trash"></i>
+                  </button>
                 </td>
               </tr>
               <% }) %>
@@ -168,7 +164,6 @@
       </div>
     </div>
   </div>
-
 
   <!-- <div class="toast-container position-static">
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -190,68 +185,6 @@
     </div>
   </div> -->
 
-  <!-- <div class="col">
-    <div class="card shadow">
-      <div class="card-body">
-        <h1 class="text-start fs-2 mb-2 fw-medium">SMS History</h1>
-        <p class="text-start">View the history of sent SMS</p>
-        <div class="table-responsive">
-          <table class="table table-striped">
-            <div class="alert alert-info text-center mb-0">No SMS History</div>
-            <thead>
-              <tr>
-                <th class="align-middle text-center" scope="col">SenderID</th>
-                <th class="align-middle text-center" scope="col">Phone Number</th>
-                <th class="align-middle text-center" scope="col">Message</th>
-                <th class="align-middle text-center" scope="col">Status</th>
-                <th class="align-middle text-center" scope="col">Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="align-middle text-center">Jaiz Bank</td>
-                <td class="align-middle text-center">2348033531332</td>
-                <td class="align-middle text-center">Hello, this is a test message</td>
-                <td class="align-middle text-center">
-                  <span class="badge bg-success">Sent</span>
-                </td>
-                <td class="align-middle text-center">2021-10-10 12:00:00</td>
-              </tr>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div> -->
-
-  <!-- 
-  <div class="col">
-    <div class="card shadow">
-      <div class="card-body">
-        <h1 class="text-start
-        fs-2 mb-2 fw-medium">SMS Statistics</h1>
-        <p class="text-start">View the statistics of sent SMS</p>
-        <div class="table-responsive">
-          <table class="table table-striped">
-            <div class="alert alert-info text-center mb-0">No SMS Statistics</div>
-            <thead>
-              <tr>
-                <th class="align-middle text-center" scope="col">SenderID</th>
-                <th class="align-middle text-center" scope="col">Total Sent</th>
-                <th class="align-middle text-center" scope="col">Total Failed</th>
-                <th class="align-middle text-center" scope="col">Total Delivered</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="align-middle text-center">Jaiz Bank</td>
-                <td class="align-middle text-center">10</td>
-                <td class="align-middle text-center">2</td>
-                <td class="align-middle text-center">8</td>
-              </tr>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
- -->
 </div>
+<!-- Delete Scheduled SMS Modal -->
+<%- include('./modals/deleteModal.ejs') %>

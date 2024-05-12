@@ -157,14 +157,10 @@
                   <span class="badge <%= sms.status === 'Active' ? 'bg-success' : 'bg-danger' %>"><%= sms.status %></span>
                 </td>
                 <td class="align-middle text-center">
-                  <form action="/monty/<%= sms._id %>?_method=DELETE" method="POST">
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-danger btn-sm rounded" data-bs-toggle="modal" data-bs-target="#deleteModal<%= sms._id %>">
-                      <i class="bi bi-trash"></i>
-                    </button>
-                    <!-- Delete Scheduled SMS Modal -->
-                    <%- include('./modals/deleteModal.ejs', {sms: sms}) %>
-                  </form>
+                  <!-- Button trigger modal -->
+                  <button type="button" class="btn btn-danger btn-sm rounded deleteButton" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="<%= sms._id %>" data-base-route="/monty/">
+                    <i class="bi bi-trash"></i>
+                  </button>
                 </td>
               </tr>
               <% }) %>
@@ -175,3 +171,5 @@
     </div>
   </div>
 </div>
+<!-- Delete Scheduled SMS Modal -->
+<%- include('./modals/deleteModal.ejs') %>
