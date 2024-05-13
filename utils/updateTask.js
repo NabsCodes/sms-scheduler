@@ -22,27 +22,31 @@ const checkAndUpdateTaskStatus = async (scheduledSms, model) => {
 	}
 };
 
-// Set all tasks to 'Inactive' when the server restarts
+// Set all tasks to their actual status when the server restarts
 const startup = async () => {
 	try {
-		// Find all tasks in the database that are marked as 'Active'
-		const activeTasksOltranz = await OltranzSms.find({ status: 'Active' });
-		const activeTasksMonty = await MontySms.find({ status: 'Active' });
+		// Find all tasks in the database
+		const allTasksOltranz = await OltranzSms.find();
+		const allTasksMonty = await MontySms.find();
 
-		// For each active task in OltranzSms...
-		for (const task of activeTasksOltranz) {
-			// ...set the status to 'Inactive'
-			task.status = 'Inactive';
+		// For each task in OltranzSms...
+		for (const task of allTasksOltranz) {
+			// ...check the actual status of the task
+			const status = schedule.scheduledJobs[task.jobName] ? 'Active' : 'Inactive';
+			// ...update the status in the database
+			task.status = status;
 			await task.save();
-			events.emit('taskUpdated', { taskId: task._id, status: 'Inactive' });
+			events.emit('taskUpdated', { taskId: task._id, status });
 		}
 
-		// For each active task in MontySms...
-		for (const task of activeTasksMonty) {
-			// ...set the status to 'Inactive'
-			task.status = 'Inactive';
+		// For each task in MontySms...
+		for (const task of allTasksMonty) {
+			// ...check the actual status of the task
+			const status = scheduledJobs[task.jobName] ? 'Active' : 'Inactive';
+			// ...update the status in the database
+			task.status = status;
 			await task.save();
-			events.emit('taskUpdated', { taskId: task._id, status: 'Inactive' });
+			events.emit('taskUpdated', { taskId: task._id, status });
 		}
 	} catch (err) {
 		console.error('Error setting task status on startup:', err.message);
