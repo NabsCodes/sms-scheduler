@@ -92,7 +92,6 @@ const scheduleJobsByDay = (jobName, days, hour, minute, receivers, title) => {
 // 	return job;
 // };
 
-
 const scheduleJobByInterval = (jobName, date, startHour, startMinute, interval, runCount, destination, source) => {
 	// Create moment object for the start time in the specified timezone
 	const startTime = moment.tz(`${date} ${startHour}:${startMinute}`, 'YYYY-MM-DD HH:mm', 'Africa/Lagos');
