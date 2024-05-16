@@ -23,6 +23,37 @@ const checkAndUpdateTaskStatus = async (scheduledSms, model) => {
 };
 
 // Set all tasks to their actual status when the server restarts
+// const startup = async () => {
+// 	try {
+// 		// Find all tasks in the database
+// 		const allTasksOltranz = await OltranzSms.find();
+// 		const allTasksMonty = await MontySms.find();
+
+// 		// For each task in OltranzSms...
+// 		for (const task of allTasksOltranz) {
+// 			// ...check the actual status of the task
+// 			const status = schedule.scheduledJobs[task.jobName] ? 'Active' : 'Inactive';
+// 			// ...update the status in the database
+// 			task.status = status;
+// 			await task.save();
+// 			events.emit('taskUpdated', { taskId: task._id, status });
+// 		}
+
+// 		// For each task in MontySms...
+// 		for (const task of allTasksMonty) {
+// 			// ...check the actual status of the task
+// 			const status = scheduledJobs[task.jobName] ? 'Active' : 'Inactive';
+// 			// ...update the status in the database
+// 			task.status = status;
+// 			await task.save();
+// 			events.emit('taskUpdated', { taskId: task._id, status });
+// 		}
+// 	} catch (err) {
+// 		console.error('Error setting task status on startup:', err.message);
+// 	}
+// };
+
+// Set all tasks to their actual status when the server restarts
 const startup = async () => {
 	try {
 		// Find all tasks in the database
@@ -31,22 +62,14 @@ const startup = async () => {
 
 		// For each task in OltranzSms...
 		for (const task of allTasksOltranz) {
-			// ...check the actual status of the task
-			const status = schedule.scheduledJobs[task.jobName] ? 'Active' : 'Inactive';
-			// ...update the status in the database
-			task.status = status;
-			await task.save();
-			events.emit('taskUpdated', { taskId: task._id, status });
+			// ...check and update the status of the task
+			await checkAndUpdateTaskStatus(task, OltranzSms);
 		}
 
 		// For each task in MontySms...
 		for (const task of allTasksMonty) {
-			// ...check the actual status of the task
-			const status = scheduledJobs[task.jobName] ? 'Active' : 'Inactive';
-			// ...update the status in the database
-			task.status = status;
-			await task.save();
-			events.emit('taskUpdated', { taskId: task._id, status });
+			// ...check and update the status of the task
+			await checkAndUpdateTaskStatus(task, MontySms);
 		}
 	} catch (err) {
 		console.error('Error setting task status on startup:', err.message);
