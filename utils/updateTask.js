@@ -96,7 +96,7 @@ const checkAndUpdateAllTasks = async () => {
 		console.error('Error checking and updating task status:', err.message);
 	} finally {
 		// Schedule the next execution of this function
-		setTimeout(checkAndUpdateAllTasks, 1000);
+		setTimeout(checkAndUpdateAllTasks, 5000);
 	}
 };
 
