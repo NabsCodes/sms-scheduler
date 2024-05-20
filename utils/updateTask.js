@@ -3,6 +3,8 @@ const OltranzSms = require('../models/oltranzSms');
 const MontySms = require('../models/montySms');
 const schedule = require('node-schedule');
 const { scheduledJobs } = require('../utils/scheduleJob');
+const { scheduleJobByInterval } = require('../utils/scheduleJob');
+const moment = require('moment-timezone');
 
 // Check and update the status of a task
 const checkAndUpdateTaskStatus = async (scheduledSms, model) => {
@@ -23,56 +25,29 @@ const checkAndUpdateTaskStatus = async (scheduledSms, model) => {
 };
 
 // Set all tasks to their actual status when the server restarts
-// const startup = async () => {
-// 	try {
-// 		// Find all tasks in the database
-// 		const allTasksOltranz = await OltranzSms.find();
-// 		const allTasksMonty = await MontySms.find();
-
-// 		// For each task in OltranzSms...
-// 		for (const task of allTasksOltranz) {
-// 			// ...check the actual status of the task
-// 			const status = schedule.scheduledJobs[task.jobName] ? 'Active' : 'Inactive';
-// 			// ...update the status in the database
-// 			task.status = status;
-// 			await task.save();
-// 			events.emit('taskUpdated', { taskId: task._id, status });
-// 		}
-
-// 		// For each task in MontySms...
-// 		for (const task of allTasksMonty) {
-// 			// ...check the actual status of the task
-// 			const status = scheduledJobs[task.jobName] ? 'Active' : 'Inactive';
-// 			// ...update the status in the database
-// 			task.status = status;
-// 			await task.save();
-// 			events.emit('taskUpdated', { taskId: task._id, status });
-// 		}
-// 	} catch (err) {
-// 		console.error('Error setting task status on startup:', err.message);
-// 	}
-// };
-
-// Set all tasks to their actual status when the server restarts
 const startup = async () => {
 	try {
-		// Find all tasks in the database
-		const allTasksOltranz = await OltranzSms.find();
-		const allTasksMonty = await MontySms.find();
+		// Get all active jobs from the database
+		const activeJobs = await MontySms.find({ status: 'Active' });
 
-		// For each task in OltranzSms...
-		for (const task of allTasksOltranz) {
-			// ...check and update the status of the task
-			await checkAndUpdateTaskStatus(task, OltranzSms);
-		}
+		// Reschedule each active job
+		for (const job of activeJobs) {
+			try {
+				// Extract the start hour and start minute from the start time
+				const startTime = moment(job.startTime, 'HH:mm');
+				const startHour = startTime.hour();
+				const startMinute = startTime.minute();
 
-		// For each task in MontySms...
-		for (const task of allTasksMonty) {
-			// ...check and update the status of the task
-			await checkAndUpdateTaskStatus(task, MontySms);
+				// Join the receivers into a single string
+				const message = job.receivers.join(', ');
+				// Reschedule the job when the server restarts
+				scheduleJobByInterval(job.jobName, job.date, startHour, startMinute, job.interval, job.runCount, message, job.senderId);
+			} catch (err) {
+				console.error(`Error rescheduling job ${job.jobName}:`, err);
+			}
 		}
 	} catch (err) {
-		console.error('Error setting task status on startup:', err.message);
+		console.error('Error fetching active jobs on startup:', err);
 	}
 };
 
@@ -100,7 +75,7 @@ const checkAndUpdateAllTasks = async () => {
 	}
 };
 
-// Start the loop
+// Start the loop to check and update all tasks
 checkAndUpdateAllTasks();
 
 module.exports = { checkAndUpdateTaskStatus, startup };

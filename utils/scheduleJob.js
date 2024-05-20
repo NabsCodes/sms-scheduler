@@ -31,10 +31,11 @@ const scheduleJobsByDay = (jobName, days, hour, minute, receivers, title) => {
 
 // Schedule a job by interval
 const scheduleJobByInterval = (jobName, date, startHour, startMinute, interval, runCount, destination, source) => {
-	// Create moment object for the start time in the specified timezone
+	let count = 0; // Initialize the count of job runs
+
 	const startTime = moment.tz(`${date} ${startHour}:${startMinute}`, 'YYYY-MM-DD HH:mm', 'Africa/Lagos');
 
-	// Create a job function that sends an SMS and returns a promise
+	// Function to run the job and send SMS
 	const jobFunction = async () => {
 		console.log(`Running job ${jobName} at ${moment.tz('Africa/Lagos').format("dddd, MMMM Do YYYY, h:mm:ss a")}`);
 		try {
@@ -44,34 +45,39 @@ const scheduleJobByInterval = (jobName, date, startHour, startMinute, interval, 
 		}
 	};
 
-	// Schedule the first job at the start time
-	let count = 0;
-	const firstJob = setTimeout(async function () {
-		await jobFunction();
-		count++;
-		scheduleRemainingJobs();
-	}, startTime.diff(moment())); // startTime.diff(moment()) returns the difference in milliseconds between the start time and the current time
-
-	// Store the first job in the scheduledJobs object
-	scheduledJobs[jobName] = [firstJob];
-
-	const scheduleRemainingJobs = () => {
+	// Function to schedule the next job
+	const scheduleNextJob = () => {
 		if (count < runCount) {
 			const nextJob = setTimeout(async () => {
 				await jobFunction();
 				count++;
-				scheduleRemainingJobs();
-			}, interval * 60 * 1000); // Convert the interval to milliseconds and add it to the current time
+				scheduleNextJob();
+			}, interval * 60 * 1000);
 
-			// Store the next job in the scheduledJobs object
 			scheduledJobs[jobName].push(nextJob);
 		} else {
-			// Cancel all jobs when the run count is reached
 			scheduledJobs[jobName].forEach(clearTimeout);
 			delete scheduledJobs[jobName];
 			console.log(`Job ${jobName} finished running at ${moment.tz('Africa/Lagos').format("dddd, MMMM Do YYYY, h:mm:ss a")}`);
 		}
 	};
+
+	// Run the job function and schedule the next job
+	const runJob = async () => {
+		try {
+			await jobFunction();
+			count++;
+			scheduleNextJob();
+		} catch (error) {
+			console.error(`Error in runJob for ${jobName}:`, error);
+		}
+	};
+
+	// Schedule the first job to run at the specified start time
+	const firstJob = setTimeout(runJob, startTime.diff(moment()));
+
+	// Store the job in the scheduledJobs object for later reference
+	scheduledJobs[jobName] = [firstJob];
 };
 
 module.exports = { scheduleJobsByDay, scheduleJobByInterval, scheduledJobs };
