@@ -2,8 +2,7 @@ const events = require('../utils/events');
 const OltranzSms = require('../models/oltranzSms');
 const MontySms = require('../models/montySms');
 const schedule = require('node-schedule');
-const { scheduledJobs } = require('../utils/scheduleJob');
-const { scheduleJobByInterval } = require('../utils/scheduleJob');
+const { scheduledJobs, scheduleJobByInterval } = require('../utils/scheduleJob');
 const moment = require('moment-timezone');
 
 // Check and update the status of a task
