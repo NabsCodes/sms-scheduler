@@ -67,10 +67,7 @@ body {
 	margin-left: 1rem;
 	border-bottom: 0.25rem solid transparent;
 }
-/* .modal-backdrop-add {
-	z-index: 2000 !important; 
-	position: fixed;
-} */
+
 .logout-btn:hover,
 .logout-btn:focus {
 	color: rgba(255, 0, 0, 1); /* Brighter red color on hover */

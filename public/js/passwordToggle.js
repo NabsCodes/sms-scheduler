@@ -1,4 +1,4 @@
-window.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
 	const togglePasswordDiv = document.querySelector(".toggle-password");
 	const togglePasswordText = togglePasswordDiv.querySelector("span");
 	const togglePasswordIcon = togglePasswordDiv.querySelector("i");

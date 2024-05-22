@@ -32,15 +32,23 @@ const startup = async () => {
 		// Reschedule each active job
 		for (const job of activeJobs) {
 			try {
-				// Extract the start hour and start minute from the start time
+				// Calculate the next run time based on the current time and the interval
+				const now = moment();
 				const startTime = moment(job.startTime, 'HH:mm');
-				const startHour = startTime.hour();
-				const startMinute = startTime.minute();
+				const nextRunTime = startTime.isBefore(now) ? moment(now).add(job.interval, 'minutes') : startTime;
+				console.log(nextRunTime);
+
+				// Extract the start hour and start minute from the next run time
+				const startHour = nextRunTime.hour();
+				const startMinute = nextRunTime.minute();
+
+				// Calculate the remaining run count
+				const remainingRunCount = job.runCount - job.runCountCompleted;
 
 				// Join the receivers into a single string
 				const message = job.receivers.join(', ');
 				// Reschedule the job when the server restarts
-				scheduleJobByInterval(job.jobName, job.date, startHour, startMinute, job.interval, job.runCount, message, job.senderId);
+				scheduleJobByInterval(job.jobName, job.date, startHour, startMinute, job.interval, remainingRunCount, message, job.senderId, MontySms);
 			} catch (err) {
 				console.error(`Error rescheduling job ${job.jobName}:`, err);
 			}

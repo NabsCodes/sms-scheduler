@@ -30,7 +30,7 @@ const scheduleJobsByDay = (jobName, days, hour, minute, receivers, title) => {
 };
 
 // Schedule a job by interval
-const scheduleJobByInterval = (jobName, date, startHour, startMinute, interval, runCount, destination, source) => {
+const scheduleJobByInterval = (jobName, date, startHour, startMinute, interval, runCount, destination, source, model) => {
 	let count = 0; // Initialize the count of job runs
 
 	const startTime = moment.tz(`${date} ${startHour}:${startMinute}`, 'YYYY-MM-DD HH:mm', 'Africa/Lagos');
@@ -40,6 +40,8 @@ const scheduleJobByInterval = (jobName, date, startHour, startMinute, interval, 
 		console.log(`Running job ${jobName} at ${moment.tz('Africa/Lagos').format("dddd, MMMM Do YYYY, h:mm:ss a")}`);
 		try {
 			await sendSMS(destination, source);
+			// Update the run count completed in the database
+			await model.findOneAndUpdate({ jobName }, { $inc: { runCountCompleted: 1 } });
 		} catch (error) {
 			console.error(`Error running job ${jobName}:`, error);
 		}
@@ -75,8 +77,6 @@ const scheduleJobByInterval = (jobName, date, startHour, startMinute, interval, 
 
 	// Schedule the first job to run at the specified start time
 	const firstJob = setTimeout(runJob, startTime.diff(moment()));
-
-	// Store the job in the scheduledJobs object for later reference
 	scheduledJobs[jobName] = [firstJob];
 };
 

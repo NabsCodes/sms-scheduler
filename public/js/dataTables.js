@@ -4,10 +4,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	new DataTable(table, {
 		"aLengthMenu": [
-			[5, 10, 20, -1],
-			[5, 10, 20, "All"]
+			[10, 20, -1],
+			[10, 20, "All"]
 		],
-		"iDisplayLength": 5,
+		"iDisplayLength": 10,
 		scrollX: true,
 		scrollY: true,
 		order: [[0, 'asc']],
