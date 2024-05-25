@@ -88,7 +88,7 @@ const scheduleTask = async (req, res) => {
 		let { date, interval, startTime, runCount, title, message } = req.body;
 		runCount = Number(runCount);
 		// Log the received data
-		// console.log(date, interval, startTime, runCount, title, message);
+		console.log(date, interval, startTime, runCount, title, message);
 
 		// Validate the received data
 		if (!date || interval === undefined || !startTime || runCount === undefined || title === undefined || !message) {
@@ -102,7 +102,7 @@ const scheduleTask = async (req, res) => {
 			// Check if the maximum number of tasks is already scheduled
 			if (scheduledTaskCount >= 20) {
 				// Flash an error message and redirect if the maximum number of tasks is already scheduled
-				req.flash('deleteError', 'Maximum number of scheduled tasks reached delete any schedulesms');
+				req.flash('error', 'Maximum number of scheduled tasks reached delete any schedulesms');
 				return res.status(400).redirect('/monty');
 			}
 
@@ -151,12 +151,12 @@ const scheduleTask = async (req, res) => {
 				const existingTask = await MontySms.findOne({ date, startTime, runCount, status: 'Active', interval });
 				if (existingTask) {
 					// Flash an error message and redirect if a task with the same time already exists
-					req.flash('deleteError', 'A task is already scheduled for this time and interval or overlaps with the runcount');
+					req.flash('error', 'A task is already scheduled for this time and interval or overlaps with the runcount');
 					return res.status(400).redirect('/monty');
 				}
 
 				// Schedule the tasks
-				scheduleJobByInterval(jobName, date, startHour, startMinute, interval, runCount, receivers, title);
+				scheduleJobByInterval(jobName, date, startHour, startMinute, interval, runCount, receivers, title, MontySms);
 
 				// Create a new scheduled SMS
 				const scheduledSms = new MontySms({
@@ -196,7 +196,7 @@ const deleteTask = async (req, res, _next) => {
 		const scheduledSms = await MontySms.findById(id);
 		if (!scheduledSms) {
 			// Flash an error message and redirect if the scheduled SMS is not found
-			req.flash('deleteError', 'Scheduled SMS not found');
+			req.flash('error', 'Scheduled SMS not found');
 			return res.status(404).redirect('/monty');
 		}
 
@@ -213,17 +213,17 @@ const deleteTask = async (req, res, _next) => {
 		const deletedSms = await MontySms.findByIdAndDelete(id);
 		if (!deletedSms) {
 			// Flash an error message and redirect if the MontySms document is not deleted
-			req.flash('deleteError', 'Failed to delete MontySms document');
+			req.flash('error', 'Failed to delete MontySms document');
 			return res.status(500).redirect('/monty');
 		}
 
 		// Flash a success message and redirect to the monty page
-		req.flash('deleteSuccess', 'Successfully deleted a task!');
+		req.flash('success', 'Successfully deleted a task!');
 		return res.status(200).redirect('/monty');
 	} catch (err) {
 		// Log the error and flash an error message and redirect to the monty page
 		console.error('Error Deleting Task:', err.message);
-		req.flash('deleteError', 'There was an error deleting your tasks. Please try again later.');
+		req.flash('error', 'There was an error deleting your tasks. Please try again later.');
 		return res.status(500).redirect('/monty');
 	}
 };

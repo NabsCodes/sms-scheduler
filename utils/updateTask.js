@@ -32,11 +32,18 @@ const startup = async () => {
 		// Reschedule each active job
 		for (const job of activeJobs) {
 			try {
-				// Calculate the next run time based on the current time and the interval
-				const now = moment();
-				const startTime = moment(job.startTime, 'HH:mm');
-				const nextRunTime = startTime.isBefore(now) ? moment(now).add(job.interval, 'minutes') : startTime;
-				console.log(nextRunTime);
+				// Get the original start time and date
+				const originalStartTime = moment(`${job.date} ${job.startTime}`, 'YYYY-MM-DD HH:mm');
+
+				// Calculate the next run time based on the original start time and the number of times the job has already run
+				let nextRunTime = moment(originalStartTime).add(job.interval * job.runCountCompleted, 'minutes');
+
+				// If the next run time is in the past, calculate the next future run time
+				while (nextRunTime.isBefore(moment())) {
+					nextRunTime = nextRunTime.add(job.interval, 'minutes');
+				}
+
+				console.log(`${job.jobName}: ${nextRunTime.format('YYYY-MM-DD HH:mm')}`);
 
 				// Extract the start hour and start minute from the next run time
 				const startHour = nextRunTime.hour();

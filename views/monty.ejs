@@ -5,10 +5,10 @@
   <a href="/monty/sendnow" class="btn btn-outline-primary rounded">Send and Test SMS</a>
 </header>
 
+<%- include('./partials/createflash.ejs') %>
 <div class="row">
   <div class="col-lg-4 col-xl-4 mb-md-3 mb-lg-3">
-    <%- include('./partials/createflash.ejs') %>
-    <div class="card shadow">
+    <div class="card shadow mt-0">
       <div class="card-body">
 
         <div class="d-flex flex-row justify-content-between">
@@ -96,7 +96,6 @@
   </div>
 
   <div class="col-lg-8 col-xl-8">
-    <%- include('./partials/scheduledflash.ejs') %>
     <div class="card shadow">
       <div class="card-body">
         <h1 class="text-start fs-2 mb-2 fw-medium">Scheduled SMS</h1>

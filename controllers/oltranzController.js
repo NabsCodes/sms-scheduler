@@ -119,7 +119,7 @@ const deleteTask = async (req, res, _next) => {
 		const { id } = req.params;
 		const scheduledSms = await OltranzSms.findById(id);
 		if (!scheduledSms) {
-			req.flash('deleteError', 'Scheduled SMS not found');
+			req.flash('error', 'Scheduled SMS not found');
 			return res.status(404).redirect('/oltranz');
 		}
 
@@ -135,11 +135,11 @@ const deleteTask = async (req, res, _next) => {
 			throw new Error('Failed to delete OltranzSms document');
 		}
 
-		req.flash('deleteSuccess', 'Successfully deleted a task!');
+		req.flash('error', 'Successfully deleted a task!');
 		return res.status(200).redirect('/oltranz');
 	} catch (err) {
 		console.error('Error Deleting Task:', err.message);
-		req.flash('deleteError', 'There was an error deleting your tasks. Please try again later.');
+		req.flash('error', 'There was an error deleting your tasks. Please try again later.');
 		return res.status(500).redirect('/oltranz');
 	}
 };
