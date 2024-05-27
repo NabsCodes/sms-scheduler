@@ -61,6 +61,9 @@ const startup = async () => {
 				await MontySms.updateOne({ _id: job._id }, { status: 'Active' });
 			} catch (err) {
 				console.error(`Error rescheduling job ${job.jobName}:`, err);
+
+				// Update the status of the job in the database
+				await MontySms.updateOne({ _id: job._id }, { status: 'Failed', error: err.message });
 			}
 		}
 	} catch (err) {
