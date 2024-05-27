@@ -56,6 +56,9 @@ const startup = async () => {
 				const message = job.receivers.join(', ');
 				// Reschedule the job when the server restarts
 				scheduleJobByInterval(job.jobName, job.date, startHour, startMinute, job.interval, remainingRunCount, message, job.senderId, MontySms);
+
+				// Update the status of the job in the database
+				await MontySms.updateOne({ _id: job._id }, { status: 'Active' });
 			} catch (err) {
 				console.error(`Error rescheduling job ${job.jobName}:`, err);
 			}
