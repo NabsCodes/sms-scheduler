@@ -13,7 +13,7 @@ This is an internal tool developed for [**MKEL Networks**](https://www.mkelnetwo
 
 ## 🚀 Usage
 
-To schedule an SMS, navigate to the scheduling page and enter the day, start time, run count, interval, sender ID, and phone numbers. Click "Schedule" to schedule the SMS.
+To schedule an SMS, navigate to the scheduling page and enter the day, start time, run count, interval, email(Optional), sender ID, and phone numbers. Click "Schedule SMS" to schedule the SMS.
 
 To view scheduled SMS messages, navigate to the monitoring side view. Here you can see the status of each scheduled SMS and cancel any SMS if needed.
 

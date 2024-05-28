@@ -6,16 +6,28 @@ const getCurrentTime = require('../utils/getCurrentTime');
 const moment = require('moment-timezone');
 
 // This function is used to render the schedule page
-const renderSchedule = async (_req, res) => {
-	// Find all scheduled SMS
-	const scheduledSms = await MontySms.find();
-	// Render the monty page with the scheduled SMS
-	res.render('monty', {
-		scheduledSms,
-		activePage: 'MontyMobile',
-		title: 'MontyMobile',
-		isHomepage: false
-	});
+const renderSchedule = async (req, res) => {
+	try {
+		// Find all scheduled SMS
+		const scheduledSms = await MontySms.find();
+		// Find all active and inactive jobs and count them respectively
+		const activeJobs = await MontySms.countDocuments({ status: 'Active' });
+		const inactiveJobs = await MontySms.countDocuments({ status: 'Inactive' });
+		// Render the monty page with the scheduled SMS
+		res.render('monty', {
+			scheduledSms,
+			activePage: 'MontyMobile',
+			title: 'MontyMobile',
+			isHomepage: false,
+			activeJobs,
+			inactiveJobs
+		});
+	} catch (error) {
+		// Log the error and flash an error message and redirect to the monty page
+		console.error('Error Fetching Scheduled SMS:', error.message);
+		req.flash('error', 'There was an error fetching the scheduled SMS and rendering the page. Please try again later.');
+		return res.status(500).redirect('/monty');
+	}
 };
 
 // This function is used to render the send page
@@ -85,10 +97,10 @@ const sendNow = async (req, res) => {
 const scheduleTask = async (req, res) => {
 	try {
 		// Destructure the request body
-		let { date, interval, startTime, runCount, title, message } = req.body;
+		let { date, interval, startTime, runCount, title, email, message } = req.body;
 		runCount = Number(runCount);
 		// Log the received data
-		console.log(date, interval, startTime, runCount, title, message);
+		console.log(date, interval, startTime, runCount, title, email, message);
 
 		// Validate the received data
 		if (!date || interval === undefined || !startTime || runCount === undefined || title === undefined || !message) {
@@ -156,7 +168,7 @@ const scheduleTask = async (req, res) => {
 				}
 
 				// Schedule the tasks
-				scheduleJobByInterval(jobName, date, startHour, startMinute, interval, runCount, receivers, title, MontySms);
+				scheduleJobByInterval(email, jobName, date, startHour, startMinute, interval, runCount, receivers, title, MontySms);
 
 				// Create a new scheduled SMS
 				const scheduledSms = new MontySms({
@@ -166,6 +178,7 @@ const scheduleTask = async (req, res) => {
 					startTime,
 					runCount,
 					senderId: title,
+					email,
 					receivers,
 					status: 'Active'
 				});

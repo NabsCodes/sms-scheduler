@@ -20,7 +20,6 @@ const moment = require('moment-timezone');
 // Import routers
 const userRouter = require('./router/userRouter');
 const homeRouter = require('./router/homeRouter');
-const oltranzRouter = require('./router/oltranzRouter');
 const montyRouter = require('./router/montyRouter');
 
 // MongoDB Connection Setup check if in production or development
@@ -84,7 +83,6 @@ app.use((req, res, next) => {
 // Routes
 app.use('/', homeRouter);
 app.use('/', userRouter);
-app.use('/oltranz', oltranzRouter);
 app.use('/monty', montyRouter);
 
 // console.log(moment.tz('Africa/Lagos').format('Z'));
@@ -132,6 +130,12 @@ events.on('messageError', (data) => {
 events.on('taskUpdated', (data) => {
 	// Emit a 'taskUpdated' event to all connected clients with the event data
 	io.emit('taskUpdated', data);
+});
+
+// Listen for 'jobCountsUpdated' events
+events.on('jobCountsUpdated', (data) => {
+	// Emit a 'jobCountsUpdated' event to all connected clients with the event data
+	io.emit('jobCountsUpdated', data);
 });
 
 // Start the HTTP server on the specified port

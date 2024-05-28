@@ -1,8 +1,11 @@
 <% layout('layouts/boilerplate-monty') %>
 
 <header class="d-flex justify-content-between align-items-center mb-3">
-  <h1 class="h4"><%= title %></h1>
   <a href="/monty/sendnow" class="btn btn-outline-primary rounded">Send and Test SMS</a>
+  <div class="d-flex flex-column flex-sm-row">
+    <p class="mb-0">Active Jobs: <span class="text-success ms-2 active-jobs-count"><%= activeJobs %></span></p>
+    <p class="ms-sm-3 mb-0">Inactive Jobs: <span class="text-danger ms-2 inactive-jobs-count"><%= inactiveJobs %></span></p>
+  </div>
 </header>
 
 <%- include('./partials/createflash.ejs') %>
@@ -12,7 +15,7 @@
       <div class="card-body">
 
         <div class="d-flex flex-row justify-content-between">
-          <h1 class="text-start fs-2 mb-2 fw-medium"><%= title %> SMS Schedule</h1>
+          <h1 class="text-start fs-3 mb-2 fw-medium"><%= title %> Scheduler</h1>
           <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Click for Instructions">
             <button type="button" class="btn btn-outline-primary rounded" data-bs-toggle="modal" data-bs-target="#instructionsModal">
               <i class="bi bi-person-raised-hand"></i>
@@ -75,6 +78,11 @@
           </div>
 
           <div class="form-group mb-2">
+            <label class="mb-2 fw-bold" for="email">Enter your email (Optional)</label>
+            <input type="text" id="email" name="email" class="form-control" placeholder="Enter your email" />
+          </div>
+
+          <div class="form-group mb-2">
             <label class="mb-2 fw-bold" for="message">Choose SenderID</label>
             <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
               <input class="btn-check" type="checkbox" autocomplete="off" name="title" value="JAIZ BANK" id="jaizbank" />
@@ -98,7 +106,7 @@
   <div class="col-lg-8 col-xl-8">
     <div class="card shadow">
       <div class="card-body">
-        <h1 class="text-start fs-2 mb-2 fw-medium">Scheduled SMS</h1>
+        <h1 class="text-start fs-3 mb-2 fw-medium">Scheduled SMS</h1>
         <p class="text-start">Monitor the Status of each Scheduled SMS</p>
         <div class="table-responsive">
           <table id="montyTable" class="table table">

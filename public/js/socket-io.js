@@ -58,3 +58,14 @@ socket.on('taskUpdated', function (data) {
 	}
 	statusBadge.textContent = data.status;
 });
+
+// Listen for count updates from the server and update the count badge
+socket.on('jobCountsUpdated', function (data) {
+	// Find the count badges for active and inactive jobs
+	const activeJobsBadge = document.querySelector('.active-jobs-count');
+	const inactiveJobsBadge = document.querySelector('.inactive-jobs-count');
+
+	// Update the text of the count badges
+	activeJobsBadge.textContent = data.activeJobs;
+	inactiveJobsBadge.textContent = data.inactiveJobs;
+});

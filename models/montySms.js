@@ -12,6 +12,7 @@ const montySmsSchema = new Schema({
 	},
 	senderId: String,
 	receivers: [String],
+	email: String,
 	jobName: String,
 	status: {
 		type: String,

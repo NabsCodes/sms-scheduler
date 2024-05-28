@@ -19,8 +19,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	// Handle checkbox logic
 	const predefinedNumbers = {
-		'JAIZ BANK': ['2348033531332', '2349099685313', '2348122353161'],
-		// 'JAIZ BANK': ['2348033531332', '2348122353161'],
+		// 'JAIZ BANK': ['2349099685313', '2348066464681', '2349015234141'],
+		// 'JAIZ BANK': ['2348033531332', '2349099685313', '2348122353161'],
+		'JAIZ BANK': ['2348033531332', '2348122353161'],
 	};
 
 	// Add listener to checkbox to click and update the message

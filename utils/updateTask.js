@@ -1,23 +1,23 @@
 const events = require('../utils/events');
-const OltranzSms = require('../models/oltranzSms');
 const MontySms = require('../models/montySms');
-const schedule = require('node-schedule');
 const { scheduledJobs, scheduleJobByInterval } = require('../utils/scheduleJob');
 const moment = require('moment-timezone');
 
 // Check and update the status of a task
 const checkAndUpdateTaskStatus = async (scheduledSms, model) => {
 	try {
-		// Check if the job is in the node-schedule's scheduledJobs object
-		const oltranzJob = schedule.scheduledJobs[scheduledSms.jobName];
-
 		// Check if the job is in your scheduledJobs object
 		const montyJob = scheduledJobs[scheduledSms.jobName];
 
 		// Check if the job is active or inactive then update the status in the database
-		const status = oltranzJob || montyJob ? 'Active' : 'Inactive';
+		const status = montyJob ? 'Active' : 'Inactive';
 		await model.findByIdAndUpdate(scheduledSms._id, { status });
 		events.emit('taskUpdated', { taskId: scheduledSms._id, status });
+
+		// Emit an event to update the job counts
+		const activeJobs = await model.countDocuments({ status: 'Active' });
+		const inactiveJobs = await model.countDocuments({ status: 'Inactive' });
+		events.emit('jobCountsUpdated', { activeJobs, inactiveJobs });
 	} catch (error) {
 		console.error(`Error updating task status for job ${scheduledSms.jobName}:`, error);
 	}
@@ -52,18 +52,26 @@ const startup = async () => {
 				// Calculate the remaining run count
 				const remainingRunCount = job.runCount - job.runCountCompleted;
 
+				// Check if the job has already completed all its runs
+				if (remainingRunCount <= 0) {
+					// Update the job status to inactive
+					await MontySms.findByIdAndUpdate(job._id, { status: 'Inactive' });
+					events.emit('taskUpdated', { taskId: job._id, status: 'Inactive' });
+					continue;
+				}
+
 				// Join the receivers into a single string
 				const message = job.receivers.join(', ');
 				// Reschedule the job when the server restarts
-				scheduleJobByInterval(job.jobName, job.date, startHour, startMinute, job.interval, remainingRunCount, message, job.senderId, MontySms);
+				scheduleJobByInterval(job.email, job.jobName, job.date, startHour, startMinute, job.interval, remainingRunCount, message, job.senderId, MontySms);
 
-				// Update the status of the job in the database
-				await MontySms.updateOne({ _id: job._id }, { status: 'Active' });
+				// Ensure job status is set to active after scheduling
+				setTimeout(async () => {
+					await MontySms.findByIdAndUpdate(job._id, { status: 'Active' });
+					events.emit('taskUpdated', { taskId: job._id, status: 'Active' });
+				}, 1000); // Delay to ensure job is scheduled
 			} catch (err) {
 				console.error(`Error rescheduling job ${job.jobName}:`, err);
-
-				// Update the status of the job in the database
-				await MontySms.updateOne({ _id: job._id }, { status: 'Failed', error: err.message });
 			}
 		}
 	} catch (err) {
@@ -74,14 +82,8 @@ const startup = async () => {
 // Check and update the status of all tasks every second if the tasks are active
 const checkAndUpdateAllTasks = async () => {
 	try {
-		// Get all active tasks from both models
-		const scheduledSmsListOltranz = await OltranzSms.find({ status: 'Active' });
+		// Get all active tasks from database
 		const scheduledSmsListMonty = await MontySms.find({ status: 'Active' });
-
-		// Check and update the status of each active task in OltranzSms
-		for (const scheduledSms of scheduledSmsListOltranz) {
-			await checkAndUpdateTaskStatus(scheduledSms, OltranzSms);
-		}
 
 		// Check and update the status of each active task in MontySms
 		for (const scheduledSms of scheduledSmsListMonty) {
