@@ -23,6 +23,8 @@ const scheduleJobByInterval = (email, jobName, date, startHour, startMinute, int
 			}
 			// Update the run count completed in the database
 			await model.findOneAndUpdate({ jobName }, { $inc: { runCountCompleted: 1 } });
+
+			count++; // Increment count only on successful execution
 		} catch (error) {
 			console.error(`Error running job ${jobName}:`, error.message);
 		}
@@ -33,7 +35,6 @@ const scheduleJobByInterval = (email, jobName, date, startHour, startMinute, int
 		if (count < runCount) {
 			const nextJob = setTimeout(async () => {
 				await jobFunction();
-				count++;
 				scheduleNextJob();
 			}, interval * 60 * 1000);
 
@@ -49,7 +50,6 @@ const scheduleJobByInterval = (email, jobName, date, startHour, startMinute, int
 	const runJob = async () => {
 		try {
 			await jobFunction();
-			count++;
 			scheduleNextJob();
 		} catch (error) {
 			console.error(`Error in runJob for ${jobName}:`, error);
