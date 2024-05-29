@@ -23,6 +23,8 @@ const checkAndUpdateTaskStatus = async (scheduledSms, model) => {
 	}
 };
 
+console.log()
+
 // Set all tasks to their actual status when the server restarts
 const startup = async () => {
 	try {
