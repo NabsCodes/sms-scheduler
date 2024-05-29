@@ -15,22 +15,22 @@ const checkAndUpdateTaskStatus = async (scheduledSms, model) => {
 		events.emit('taskUpdated', { taskId: scheduledSms._id, status });
 
 		// Check and update the job counts status
-		const activeJobs = await model.countDocuments({ status: 'Active' });
-		const inactiveJobs = await model.countDocuments({ status: 'Inactive' });
-		events.emit('jobCountsUpdated', { activeJobs, inactiveJobs });
+		const allJobs = await model.countDocuments({ status: 'Active' });
+		const inallJobs = await model.countDocuments({ status: 'Inactive' });
+		events.emit('jobCountsUpdated', { allJobs, inallJobs });
 	} catch (error) {
 		console.error(`Error updating task status for job ${scheduledSms.jobName}:`, error);
 	}
 };
 
-// Set all tasks to their actual status when the server restarts
+// Set all tasks to their correct status on server startup and reschedule them
 const startup = async () => {
 	try {
-		// Get all active jobs from the database
-		const activeJobs = await MontySms.find({});
+		// Get all jobs from the database
+		const allJobs = await MontySms.find({});
 
-		// Reschedule each active job
-		for (const job of activeJobs) {
+		// Reschedule each job based on the number of times the job has already run
+		for (const job of allJobs) {
 			try {
 				// Get the original start time and date
 				const originalStartTime = moment(`${job.date} ${job.startTime}`, 'YYYY-MM-DD HH:mm');
@@ -43,6 +43,7 @@ const startup = async () => {
 					nextRunTime = nextRunTime.add(job.interval, 'minutes');
 				}
 
+				// Log the job name and the next run time
 				console.log(`${job.jobName}: ${nextRunTime.format('YYYY-MM-DD HH:mm')}`);
 
 				// Extract the start hour and start minute from the next run time
@@ -58,18 +59,18 @@ const startup = async () => {
 					await MontySms.findByIdAndUpdate(job._id, { status: 'Inactive' });
 					events.emit('taskUpdated', { taskId: job._id, status: 'Inactive' });
 					continue;
+				} else { // If the job has not completed all its runs
+					// Join the receivers into a single string
+					const message = job.receivers.join(', ');
+					// Reschedule the job when the server restarts
+					scheduleJobByInterval(job.email, job.jobName, job.date, startHour, startMinute, job.interval, remainingRunCount, message, job.senderId, MontySms);
+
+					// Ensure job status is set to active after scheduling
+					setTimeout(async () => {
+						await MontySms.findByIdAndUpdate(job._id, { status: 'Active' });
+						events.emit('taskUpdated', { taskId: job._id, status: 'Active' });
+					}, 1000); // Delay to ensure job is scheduled
 				}
-
-				// Join the receivers into a single string
-				const message = job.receivers.join(', ');
-				// Reschedule the job when the server restarts
-				scheduleJobByInterval(job.email, job.jobName, job.date, startHour, startMinute, job.interval, remainingRunCount, message, job.senderId, MontySms);
-
-				// Ensure job status is set to active after scheduling
-				setTimeout(async () => {
-					await MontySms.findByIdAndUpdate(job._id, { status: 'Active' });
-					events.emit('taskUpdated', { taskId: job._id, status: 'Active' });
-				}, 1000); // Delay to ensure job is scheduled
 			} catch (err) {
 				console.error(`Error rescheduling job ${job.jobName}:`, err);
 			}
@@ -93,7 +94,7 @@ const checkAndUpdateAllTasks = async () => {
 		console.error('Error checking and updating task status:', err.message);
 	} finally {
 		// Schedule the next execution of this function
-		setTimeout(checkAndUpdateAllTasks, 1000);
+		// setTimeout(checkAndUpdateAllTasks, 1000);
 	}
 };
 
