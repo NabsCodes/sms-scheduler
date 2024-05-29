@@ -23,8 +23,6 @@ const checkAndUpdateTaskStatus = async (scheduledSms, model) => {
 	}
 };
 
-console.log()
-
 // Set all tasks to their actual status when the server restarts
 const startup = async () => {
 	try {
@@ -59,7 +57,7 @@ const startup = async () => {
 					// If the job has completed all its runs, update its status to inactive
 					await MontySms.findByIdAndUpdate(job._id, { status: 'Inactive' });
 					events.emit('taskUpdated', { taskId: job._id, status: 'Inactive' });
-					return;
+					continue;
 				}
 
 				// Join the receivers into a single string
