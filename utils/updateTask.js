@@ -14,7 +14,7 @@ const checkAndUpdateTaskStatus = async (scheduledSms, model) => {
 		await model.findByIdAndUpdate(scheduledSms._id, { status });
 		events.emit('taskUpdated', { taskId: scheduledSms._id, status });
 
-		// Emit an event to update the job counts
+		// Check and update the job counts status
 		const activeJobs = await model.countDocuments({ status: 'Active' });
 		const inactiveJobs = await model.countDocuments({ status: 'Inactive' });
 		events.emit('jobCountsUpdated', { activeJobs, inactiveJobs });
@@ -23,13 +23,11 @@ const checkAndUpdateTaskStatus = async (scheduledSms, model) => {
 	}
 };
 
-console.log();
-
 // Set all tasks to their actual status when the server restarts
 const startup = async () => {
 	try {
 		// Get all active jobs from the database
-		const activeJobs = await MontySms.find({ status: 'Active' });
+		const activeJobs = await MontySms.find({});
 
 		// Reschedule each active job
 		for (const job of activeJobs) {
@@ -54,12 +52,12 @@ const startup = async () => {
 				// Calculate the remaining run count
 				const remainingRunCount = job.runCount - job.runCountCompleted;
 
-				// Check if the job has already completed all its runs
-				if (remainingRunCount <= 0) {
-					// Update the job status to inactive
+				// Check if the job has completed all its runs
+				if (job.runCountCompleted >= job.runCount) {
+					// If the job has completed all its runs, update its status to inactive
 					await MontySms.findByIdAndUpdate(job._id, { status: 'Inactive' });
 					events.emit('taskUpdated', { taskId: job._id, status: 'Inactive' });
-					continue;
+					return;
 				}
 
 				// Join the receivers into a single string
@@ -102,4 +100,4 @@ const checkAndUpdateAllTasks = async () => {
 // Start the loop to check and update all tasks
 checkAndUpdateAllTasks();
 
-module.exports = { checkAndUpdateTaskStatus, startup };
+module.exports = { startup };
