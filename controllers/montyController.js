@@ -14,7 +14,7 @@ const renderSchedule = async (req, res) => {
 		const activeJobs = await MontySms.countDocuments({ status: 'Active' });
 		const inactiveJobs = await MontySms.countDocuments({ status: 'Inactive' });
 		// Render the monty page with the scheduled SMS
-		res.render('monty', {
+		res.render('pages/monty', {
 			scheduledSms,
 			activePage: 'MontyMobile',
 			title: 'MontyMobile',
@@ -25,15 +25,15 @@ const renderSchedule = async (req, res) => {
 	} catch (error) {
 		// Log the error and flash an error message and redirect to the monty page
 		console.error('Error Fetching Scheduled SMS:', error.message);
-		req.flash('error', 'There was an error fetching the scheduled SMS and rendering the page. Please try again later.');
-		return res.status(500).redirect('/monty');
+		req.flash('error', 'There was an error rendering MontyMobile Page. Please try again later.');
+		return res.status(500).redirect('/');
 	}
 };
 
 // This function is used to render the send page
 const renderSend = (_req, res) => {
 	// Render the send page
-	res.render('montySendSMS', {
+	res.render('pages/montySendSMS', {
 		activePage: 'MontyMobile',
 		title: 'Monty Test SMS',
 		isHomepage: false
@@ -103,7 +103,7 @@ const scheduleTask = async (req, res) => {
 		console.log(date, interval, startTime, runCount, title, email, message);
 
 		// Validate the received data
-		if (!date || interval === undefined || !startTime || runCount === undefined || title === undefined || !message) {
+		if (!date || interval === undefined || !startTime || isNaN(runCount) || title === undefined || !message) {
 			// Flash an error message and redirect if the data is invalid
 			req.flash('error', 'Please fill in all fields correctly');
 			return res.status(400).redirect('/monty');

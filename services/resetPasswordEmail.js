@@ -5,8 +5,8 @@ const resetEmail = async (recipient, subject, link) => {
 	const transporter = nodemailer.createTransport({
 		service: 'Gmail',
 		auth: {
-			user: 'mkelnetworks1', // Replace with your email
-			pass: 'iyofashhmkqdwpnq' // Replace with your email password
+			user: 'vas.mkelnetworks@gmail.com', // Replace with your email
+			pass: 'klqm kpkd hdhn svtc' // Replace with your email password
 		}
 	});
 
@@ -21,7 +21,7 @@ const resetEmail = async (recipient, subject, link) => {
 `;
 	// Define the mail options
 	const mailOptions = {
-		from: 'vas@mkelnetworks.com',
+		from: '"MKEL SMS Scheduler" vas.mkelnetworks@gmail.com',
 		to: recipient,
 		subject,
 		html: htmlContent

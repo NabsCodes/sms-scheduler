@@ -15,8 +15,6 @@ const cookieParser = require('cookie-parser');
 require('dotenv').config();
 require('./utils/updateTask').startup();
 
-const moment = require('moment-timezone');
-
 // Import routers
 const userRouter = require('./router/userRouter');
 const homeRouter = require('./router/homeRouter');
@@ -68,7 +66,10 @@ app.use(session({
 	resave: false,
 	saveUninitialized: true,
 	cookie: { secure: false },
-	store: MongoStore.create({ mongoUrl: dbUri })
+	store: MongoStore.create({
+		mongoUrl: dbUri,
+		touchAfter: 24 * 3600 // time period in seconds
+	})
 }));
 app.use(flash());
 
@@ -85,21 +86,18 @@ app.use('/', homeRouter);
 app.use('/', userRouter);
 app.use('/monty', montyRouter);
 
-// console.log(moment.tz('Africa/Lagos').format('Z'));
-// console.log(moment.tz('Africa/Lagos').utcOffset());
-// console.log(moment.tz('Africa/Lagos').format("dddd, MMMM Do YYYY, h:mm:ss a"));
-
 // app.get('/test500', (req, res) => {
 // 	throw new Error();
 // });
 
-// Catch All Route for 404 Errors
-app.all('*', (_req, _res, next) => {
-	next(new ExpressError('Page Not Found', 404)); // Pass error to error handling middleware
-});
-
-// Error Handling Middleware
-app.use(errorHandler);
+if (process.env.NODE_ENV === 'production') {
+	// Catch All Route for 404 Errors
+	app.all('*', (_req, _res, next) => {
+		next(new ExpressError('Page Not Found', 404)); // Pass error to error handling middleware
+	});
+	// Error Handling Middleware
+	app.use(errorHandler);
+}
 
 const port = process.env.PORT;
 
