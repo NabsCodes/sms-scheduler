@@ -22,9 +22,10 @@ const montyRouter = require('./router/montyRouter');
 
 // MongoDB Connection Setup check if in production or development
 const dbUri = process.env.NODE_ENV === 'production' ? process.env.MONGODB_URI : 'mongodb://localhost:27017/sms-scheduler';
-mongoose.connect(dbUri, { maxPoolSize: 10 })
+mongoose
+	.connect(dbUri, { maxPoolSize: 10 })
 	.then(() => console.log('Connected to DB!'))
-	.catch(error => console.log(`Error Connecting to Mongo: ${error.message}`));
+	.catch((error) => console.log(`Error Connecting to Mongo: ${error.message}`));
 
 // Set up Mongoose connection event handlers
 const db = mongoose.connection;
@@ -61,19 +62,21 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Use middleware for session and flash messages
-app.use(session({
-	secret: process.env.SESSION_SECRET,
-	resave: false,
-	saveUninitialized: true,
-	cookie: { secure: false },
-	store: MongoStore.create({
-		mongoUrl: dbUri,
-		touchAfter: 24 * 3600 // time period in seconds
+app.use(
+	session({
+		secret: process.env.SESSION_SECRET,
+		resave: false,
+		saveUninitialized: true,
+		cookie: { secure: false },
+		store: MongoStore.create({
+			mongoUrl: dbUri,
+			touchAfter: 24 * 3600, // time period in seconds
+		}),
 	})
-}));
+);
 app.use(flash());
 
-// Middleware to pass flash messages to all views 
+// Middleware to pass flash messages to all views
 app.use((req, res, next) => {
 	res.locals.messages = req.flash(); // Pass flash messages to all views
 	res.locals.returnTo = req.session.returnTo; // Pass the returnTo URL to all views
@@ -140,4 +143,3 @@ events.on('jobCountsUpdated', (data) => {
 server.listen(port, () => {
 	console.log(`Server running on http://localhost:${port}`);
 });
-
