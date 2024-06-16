@@ -43,5 +43,5 @@ const isLoggedIn = (req, res, next) => {
 
 module.exports = {
 	storeReturnTo,
-	isLoggedIn
+	isLoggedIn,
 };

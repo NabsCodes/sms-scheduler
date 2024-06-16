@@ -22,7 +22,7 @@ const register = async (req, res) => {
 		const newUser = new User({
 			username,
 			email,
-			password: hashedPassword
+			password: hashedPassword,
 		});
 
 		// Save the new user to the database
@@ -82,7 +82,9 @@ const handleLogin = async (req, res) => {
 
 		// If authentication is successful, sign the JWT
 		const expiresIn = rememberMe ? '7d' : '1d'; // 7 days if "Remember Me" is checked, otherwise 1 day
-		const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn });
+		const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+			expiresIn,
+		});
 
 		// Set rememberMe cookie option if "Remember Me" is checked (7 days), otherwise, the cookie expires when the browser is closed
 		const cookieOptions = { httpOnly: true };
@@ -139,7 +141,9 @@ const resetPasswordLink = async (req, res) => {
 		}
 
 		// Sign a JWT token with the user's ID
-		const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30m' });
+		const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+			expiresIn: '30m',
+		});
 
 		// Check if the token was successfully created
 		if (!token) {
@@ -157,7 +161,7 @@ const resetPasswordLink = async (req, res) => {
 		// Respond with a success message
 		res.status(200).send('Password reset link has been sent to your email.');
 	} catch (error) {
-		// 
+		//
 		console.log(error);
 		res.status(500).send('Error generating password reset link');
 	}
@@ -232,5 +236,5 @@ module.exports = {
 	logout,
 	resetPasswordLink,
 	resetPassword,
-	renderResetPassword
+	renderResetPassword,
 };

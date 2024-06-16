@@ -6,8 +6,8 @@ const successEmail = async (recipient, subject, success, destination) => {
 		service: 'Gmail',
 		auth: {
 			user: 'vas.mkelnetworks@gmail.com', // Replace with your email
-			pass: 'klqm kpkd hdhn svtc' // Replace with your email password
-		}
+			pass: 'klqm kpkd hdhn svtc', // Replace with your email password
+		},
 	});
 
 	const htmlContent = `
@@ -23,7 +23,7 @@ const successEmail = async (recipient, subject, success, destination) => {
 		from: '"MKEL SMS Scheduler" vas.mkelnetworks@gmail.com',
 		to: recipient,
 		subject,
-		html: htmlContent
+		html: htmlContent,
 	};
 
 	// Send the email

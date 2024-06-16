@@ -14,25 +14,29 @@ const sendSMS = async (destination, source, email = '') => {
 	const username = process.env.MONTY_USERNAME;
 	const password = process.env.MONTY_PASSWORD;
 	try {
-		const response = await axios.post('https://httpsmsc05.montymobile.com/HTTP/api/Client/SendSMS',
+		const response = await axios.post(
+			'https://httpsmsc05.montymobile.com/HTTP/api/Client/SendSMS',
 			{
 				destination,
 				source,
 				text: montyMessages[0].text,
-				dataCoding: 0
+				dataCoding: 0,
 			},
 			{
 				headers: {
 					'Content-Type': 'application/json', // Specify the type of data
-					'Username': username,
-					'Password': password
-				}
-			});
+					Username: username,
+					Password: password,
+				},
+			},
+		);
 		// console.log(response.data);
 		if (response.data.ErrorDescription === 'Ok') {
 			console.log(`SMS delivered successfully: ${montyMessages[0].text}`);
 			// Emit a message sent event
-			events.emit('messageSent', { message: `SMS delivered successfully: ${montyMessages[0].text}` });
+			events.emit('messageSent', {
+				message: `SMS delivered successfully: ${montyMessages[0].text}`,
+			});
 			// Send a success email to the user
 			if (email) {
 				try {
@@ -46,11 +50,12 @@ const sendSMS = async (destination, source, email = '') => {
 			console.log(`Server error when sending message: ${sanitizedData}`);
 			throw new Error(`Server error: Failed to send SMS. Please check the SMS API and try again.`);
 		}
-
 	} catch (error) {
 		console.error(`Error when sending message: ${error}`);
 		// Emit a message error event
-		events.emit('messageError', { error: 'Error: Failed to send SMS. Please check the SMS API and try again.' });
+		events.emit('messageError', {
+			error: 'Error: Failed to send SMS. Please check the SMS API and try again.',
+		});
 		// Send an error email to the user
 		if (email) {
 			try {

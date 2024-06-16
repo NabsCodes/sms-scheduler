@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
 
 :root {
 	--primary-lightblue: #0099d1;
@@ -6,7 +6,7 @@
 }
 
 body {
-	font-family: "Lato", sans-serif;
+	font-family: 'Lato', sans-serif;
 }
 
 .nav-edit {
@@ -97,77 +97,77 @@ body {
 }
 
 /* Dark mode styles */
-html[data-bs-theme="dark"] .flatpickr-calendar {
+html[data-bs-theme='dark'] .flatpickr-calendar {
 	background-color: #333;
 	border-color: #333;
 }
 
-html[data-bs-theme="dark"] .flatpickr-month,
-html[data-bs-theme="dark"] .flatpickr-weekday {
+html[data-bs-theme='dark'] .flatpickr-month,
+html[data-bs-theme='dark'] .flatpickr-weekday {
 	color: #ffffff; /* White color for the month and weekday text */
 }
 
-html[data-bs-theme="dark"] .flatpickr-day {
+html[data-bs-theme='dark'] .flatpickr-day {
 	color: #ffffff; /* White color for the day text */
 }
 
-html[data-bs-theme="dark"] .flatpickr-day.selected {
+html[data-bs-theme='dark'] .flatpickr-day.selected {
 	background: #98fb98;
 	color: #000000;
 	border-color: #98fb98;
 }
 
-html[data-bs-theme="dark"] .flatpickr-day.today {
+html[data-bs-theme='dark'] .flatpickr-day.today {
 	background: #00aeef; /* Different color for the current date */
 	color: #000;
 	border-color: #00aeef;
 }
 
-html[data-bs-theme="dark"] .flatpickr-day.flatpickr-day:hover {
+html[data-bs-theme='dark'] .flatpickr-day.flatpickr-day:hover {
 	color: #000000; /* Black color for the current date on hover */
 }
 
-html[data-bs-theme="dark"] .flatpickr-day.flatpickr-disabled {
+html[data-bs-theme='dark'] .flatpickr-day.flatpickr-disabled {
 	color: #505050; /* Different color for the disabled days */
 }
 
-html[data-bs-theme="dark"] .flatpickr-day.prevMonthDay,
-html[data-bs-theme="dark"] .flatpickr-day.nextMonthDay {
+html[data-bs-theme='dark'] .flatpickr-day.prevMonthDay,
+html[data-bs-theme='dark'] .flatpickr-day.nextMonthDay {
 	color: #868585; /* Lighter color for the days in the next and previous months */
 }
 
-html[data-bs-theme="dark"] .flatpickr-months .flatpickr-prev-month,
-html[data-bs-theme="dark"] .flatpickr-months .flatpickr-next-month {
+html[data-bs-theme='dark'] .flatpickr-months .flatpickr-prev-month,
+html[data-bs-theme='dark'] .flatpickr-months .flatpickr-next-month {
 	fill: #fff;
 }
 /* Dark mode styles for time picker */
-html[data-bs-theme="dark"] .flatpickr-time {
+html[data-bs-theme='dark'] .flatpickr-time {
 	/* background-color: #333; */
 	color: #ffffff;
 }
 
-html[data-bs-theme="dark"] .flatpickr-time input {
+html[data-bs-theme='dark'] .flatpickr-time input {
 	color: #ffffff;
 }
 
-html[data-bs-theme="dark"] .flatpickr-am-pm {
+html[data-bs-theme='dark'] .flatpickr-am-pm {
 	color: #ffffff;
 }
 
-html[data-bs-theme="dark"] .flatpickr-time input:hover,
+html[data-bs-theme='dark'] .flatpickr-time input:hover,
 .flatpickr-time .flatpickr-am-pm:hover,
 .flatpickr-time input:focus,
 .flatpickr-time .flatpickr-am-pm:focus {
 	background: #a3a3a3;
 }
 
-html[data-bs-theme="dark"] .tempus-dominus-widget {
+html[data-bs-theme='dark'] .tempus-dominus-widget {
 	background-color: #333;
 	color: #ffffff;
 }
 
 /* Light mode styles */
-html[data-bs-theme="light"] .tempus-dominus-widget {
+html[data-bs-theme='light'] .tempus-dominus-widget {
 	background-color: #ffffff;
 	color: #000000;
 }

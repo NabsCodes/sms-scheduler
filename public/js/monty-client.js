@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
 	// Update the time every second
 	setInterval(() => {
-		const now = new Date().toLocaleString("en-US", { timeZone: "Africa/Lagos" });
+		const now = new Date().toLocaleString('en-US', {
+			timeZone: 'Africa/Lagos',
+		});
 		const date = new Date(now);
 		const hour = `${date.getHours()}`.padStart(2, 0);
 		const min = `${date.getMinutes()}`.padStart(2, 0);
@@ -15,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	// Enable tooltips
 	const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-	[...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+	[...tooltipTriggerList].map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl));
 
 	// Handle checkbox logic
 	const predefinedNumbers = {

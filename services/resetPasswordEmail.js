@@ -6,8 +6,8 @@ const resetEmail = async (recipient, subject, link) => {
 		service: 'Gmail',
 		auth: {
 			user: 'vas.mkelnetworks@gmail.com', // Replace with your email
-			pass: 'klqm kpkd hdhn svtc' // Replace with your email password
-		}
+			pass: 'klqm kpkd hdhn svtc', // Replace with your email password
+		},
 	});
 
 	const htmlContent = `
@@ -24,7 +24,7 @@ const resetEmail = async (recipient, subject, link) => {
 		from: '"MKEL SMS Scheduler" vas.mkelnetworks@gmail.com',
 		to: recipient,
 		subject,
-		html: htmlContent
+		html: htmlContent,
 	};
 
 	// Send the email

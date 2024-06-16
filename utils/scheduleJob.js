@@ -1,7 +1,7 @@
 const moment = require('moment-timezone');
 const sendSMS = require('../api/montyApi');
 
-// Object to store scheduled jobs 
+// Object to store scheduled jobs
 const scheduledJobs = {};
 
 // Schedule a job by interval
@@ -12,7 +12,7 @@ const scheduleJobByInterval = (email, jobName, date, startHour, startMinute, int
 
 	// Function to run the job and send SMS
 	const jobFunction = async () => {
-		console.log(`Running job ${jobName} at ${moment.tz('Africa/Lagos').format("dddd, MMMM Do YYYY, h:mm:ss a")}`);
+		console.log(`Running job ${jobName} at ${moment.tz('Africa/Lagos').format('dddd, MMMM Do YYYY, h:mm:ss a')}`);
 		try {
 			// Check if the email is not an empty string
 			if (email !== '') {
@@ -33,16 +33,19 @@ const scheduleJobByInterval = (email, jobName, date, startHour, startMinute, int
 	// Function to schedule the next job
 	const scheduleNextJob = async () => {
 		if (count < runCount) {
-			const nextJob = setTimeout(async () => {
-				await jobFunction();
-				scheduleNextJob();
-			}, interval * 60 * 1000);
+			const nextJob = setTimeout(
+				async () => {
+					await jobFunction();
+					scheduleNextJob();
+				},
+				interval * 60 * 1000,
+			);
 
 			scheduledJobs[jobName].push(nextJob);
 		} else {
 			scheduledJobs[jobName].forEach(clearTimeout);
 			delete scheduledJobs[jobName];
-			console.log(`Job ${jobName} finished running at ${moment.tz('Africa/Lagos').format("dddd, MMMM Do YYYY, h:mm:ss a")}`);
+			console.log(`Job ${jobName} finished running at ${moment.tz('Africa/Lagos').format('dddd, MMMM Do YYYY, h:mm:ss a')}`);
 		}
 	};
 

@@ -8,7 +8,7 @@ const montySmsSchema = new Schema({
 	runCount: Number,
 	runCountCompleted: {
 		type: Number,
-		default: 0
+		default: 0,
 	},
 	senderId: String,
 	receivers: [String],
@@ -17,8 +17,8 @@ const montySmsSchema = new Schema({
 	status: {
 		type: String,
 		enum: ['Active', 'Inactive'],
-		default: 'Active'
-	}
+		default: 'Active',
+	},
 });
 
 const MontySms = mongoose.model('MontySms', montySmsSchema);

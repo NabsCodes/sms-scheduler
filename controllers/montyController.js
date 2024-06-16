@@ -20,7 +20,7 @@ const renderSchedule = async (req, res) => {
 			title: 'MontyMobile',
 			isHomepage: false,
 			activeJobs,
-			inactiveJobs
+			inactiveJobs,
 		});
 	} catch (error) {
 		// Log the error and flash an error message and redirect to the monty page
@@ -36,7 +36,7 @@ const renderSend = (_req, res) => {
 	res.render('pages/montySendSMS', {
 		activePage: 'MontyMobile',
 		title: 'Monty Test SMS',
-		isHomepage: false
+		isHomepage: false,
 	});
 };
 
@@ -55,7 +55,7 @@ const sendNow = async (req, res) => {
 		}
 
 		// Split the phone numbers and remove whitespace
-		const phoneNumbers = message.split(',').map(item => item.trim());
+		const phoneNumbers = message.split(',').map((item) => item.trim());
 
 		// Validate the phone numbers
 		for (const phoneNumber of phoneNumbers) {
@@ -119,7 +119,7 @@ const scheduleTask = async (req, res) => {
 			}
 
 			// Split the phone numbers and remove whitespace
-			const phoneNumbers = message.split(',').map(item => item.trim());
+			const phoneNumbers = message.split(',').map((item) => item.trim());
 
 			// Validate the phone numbers
 			for (const phoneNumber of phoneNumbers) {
@@ -139,7 +139,7 @@ const scheduleTask = async (req, res) => {
 			}
 
 			// Split the start time to hours and minutes
-			const [startHour, startMinute] = startTime.split(':').map(item => Number(item));
+			const [startHour, startMinute] = startTime.split(':').map((item) => Number(item));
 
 			// Convert the date and start time to a moment object in Africa/Lagos timezone
 			const taskDateTime = moment.tz(`${date} ${startTime}`, 'YYYY-MM-DD HH:mm', 'Africa/Lagos');
@@ -160,7 +160,13 @@ const scheduleTask = async (req, res) => {
 				const jobName = uuidv4();
 
 				// Check if a task with the date, start time, end time, and interval already exists
-				const existingTask = await MontySms.findOne({ date, startTime, runCount, status: 'Active', interval });
+				const existingTask = await MontySms.findOne({
+					date,
+					startTime,
+					runCount,
+					status: 'Active',
+					interval,
+				});
 				if (existingTask) {
 					// Flash an error message and redirect if a task with the same time already exists
 					req.flash('error', 'A task is already scheduled for this time and interval or overlaps with the runcount');
@@ -180,7 +186,7 @@ const scheduleTask = async (req, res) => {
 					senderId: title,
 					email,
 					receivers,
-					status: 'Active'
+					status: 'Active',
 				});
 
 				// Save the scheduled SMS
@@ -217,7 +223,7 @@ const deleteTask = async (req, res, _next) => {
 		const jobName = scheduledSms.jobName;
 		const jobs = scheduledJobs[jobName];
 		if (jobs) {
-			jobs.forEach(job => clearTimeout(job));
+			jobs.forEach((job) => clearTimeout(job));
 			delete scheduledJobs[jobName];
 			console.log(`Job ${jobName} cancelled and deleted`);
 		}
@@ -241,4 +247,10 @@ const deleteTask = async (req, res, _next) => {
 	}
 };
 
-module.exports = { renderSchedule, renderSend, sendNow, scheduleTask, deleteTask };
+module.exports = {
+	renderSchedule,
+	renderSend,
+	sendNow,
+	scheduleTask,
+	deleteTask,
+};

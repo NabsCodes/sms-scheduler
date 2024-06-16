@@ -72,7 +72,7 @@ app.use(
 			mongoUrl: dbUri,
 			touchAfter: 24 * 3600, // time period in seconds
 		}),
-	})
+	}),
 );
 app.use(flash());
 

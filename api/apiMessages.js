@@ -7,8 +7,8 @@ const generateMessages = () => {
 	// Define the messages to be sent by Monty API
 	const montyMessages = [
 		{
-			"text": `Your OTP code is ${time}`,
-		}
+			text: `Your OTP code is ${time}`,
+		},
 	];
 
 	return { montyMessages };

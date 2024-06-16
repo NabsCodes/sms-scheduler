@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		localization: {
 			locale: 'en-NG',
 			format: 'HH:mm',
-			hourCycle: 'h23'
+			hourCycle: 'h23',
 		},
 		display: {
 			components: {
@@ -19,9 +19,9 @@ document.addEventListener('DOMContentLoaded', function () {
 				clock: true,
 				hours: true,
 				minutes: true,
-				seconds: false
+				seconds: false,
 			},
-			theme: 'auto'
-		}
+			theme: 'auto',
+		},
 	});
 });

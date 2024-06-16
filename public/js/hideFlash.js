@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const alerts = document.querySelectorAll('.flashAlert');
 
 	// Set a timeout to start the fade out
-	alerts.forEach(alert => {
+	alerts.forEach((alert) => {
 		setTimeout(() => {
 			// Start the fade out
 			alert.style.opacity = '0';
