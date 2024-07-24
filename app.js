@@ -74,7 +74,7 @@ app.use(
 		}),
 	}),
 );
-app.use(flash());
+app.use(flash()); // Use middleware for flash messages
 
 // Middleware to pass flash messages to all views
 app.use((req, res, next) => {
